@@ -1,567 +1,570 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Homework Hub</title>
-    <style>
-        body {
-            margin: 0;
-            padding: 0;
-            font-family: Arial, sans-serif;
-            background-color: #1a1a1a;
-            color: #ffffff;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Homework Hub</title>
+<style>
+body {
+margin: 0;
+padding: 0;
+font-family: Arial, sans-serif;
+background-color: #1a1a1a;
+color: #ffffff;
+}
 
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 20px;
-        }
+.container {
+max-width: 1200px;
+margin: 0 auto;
+padding: 20px;
+}
 
-        header {
-            background-color: #0d1a26;
-            padding: 20px;
-            text-align: center;
-            border-bottom: 3px solid #1e3a5f;
-        }
+header {
+background-color: #0d1a26;
+padding: 20px;
+text-align: center;
+border-bottom: 3px solid #1e3a5f;
+}
 
-        h1 {
-            margin: 0;
-            color: #4a90e2;
-        }
+h1 {
+margin: 0;
+color: #4a90e2;
+}
 
-        .subject-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 20px;
-            margin-top: 30px;
-        }
+.subject-grid {
+display: grid;
+grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+gap: 20px;
+margin-top: 30px;
+}
 
-        .subject-card {
-            background-color: #252526;
-            padding: 20px;
-            border-radius: 8px;
-            border: 1px solid #1e3a5f;
-        }
+.subject-card {
+background-color: #252526;
+padding: 20px;
+border-radius: 8px;
+border: 1px solid #1e3a5f;
+}
 
-        .subject-card h2 {
-            color: #4a90e2;
-            margin-top: 0;
-            font-size: 1.2em;
-            text-align: left;
-        }
+.subject-card h2 {
+color: #4a90e2;
+margin-top: 0;
+font-size: 1.2em;
+text-align: left;
+}
 
-        #no-courses h2 {
-            text-align: left;
-        }
+#no-courses h2 {
+text-align: left;
+}
 
-        @media (min-width: 768px) {
-            #no-courses h2 {
-                text-align: center;
-            }
-        }
+@media (min-width: 768px) {
+#no-courses h2 {
+text-align: center;
+}
+}
 
-        .task-list {
-            list-style: none;
-            padding: 0;
-        }
+.task-list {
+list-style: none;
+padding: 0;
+}
 
-        .task-item {
-            display: flex;
-            align-items: center;
-            margin: 10px 0;
-            padding: 5px;
-            background-color: #303030;
-            border-radius: 4px;
-        }
+.task-item {
+display: flex;
+align-items: center;
+margin: 10px 0;
+padding: 5px;
+background-color: #303030;
+border-radius: 4px;
+}
 
-        .task-item input[type="checkbox"] {
-            margin-right: 10px;
-        }
+.task-item input[type="checkbox"] {
+margin-right: 10px;
+}
 
-        .task-item span {
-            flex-grow: 1;
-        }
+.task-item span {
+flex-grow: 1;
+}
 
-        .calendar-btn {
-            background-color: #4a90e2;
-            border: none;
-            padding: 5px 10px;
-            border-radius: 4px;
-            color: white;
-            cursor: pointer;
-            margin-left: 10px;
-        }
+.calendar-btn {
+background-color: #4a90e2;
+border: none;
+padding: 5px 10px;
+border-radius: 4px;
+color: white;
+cursor: pointer;
+margin-left: 10px;
+}
 
-        .calendar-btn:hover {
-            background-color: #357abd;
-        }
+.calendar-btn:hover {
+background-color: #357abd;
+}
 
-        .delete-btn {
-            background-color: #e24a4a;
-            border: none;
-            padding: 5px 10px;
-            border-radius: 4px;
-            color: white;
-            cursor: pointer;
-            margin-left: 10px;
-            display: none;
-        }
+.delete-btn {
+background-color: #e24a4a;
+border: none;
+padding: 5px 10px;
+border-radius: 4px;
+color: white;
+cursor: pointer;
+margin-left: 10px;
+display: none;
+}
 
-        .task-item.completed .delete-btn {
-            display: inline-block;
-        }
+.task-item.completed .delete-btn {
+display: inline-block;
+}
 
-        .delete-btn:hover {
-            background-color: #bd3535;
-        }
+.delete-btn:hover {
+background-color: #bd3535;
+}
 
-        .add-task {
-            width: 100%;
-            padding: 8px;
-            margin-top: 10px;
-            background-color: #4a90e2;
-            border: none;
-            border-radius: 4px;
-            color: white;
-            cursor: pointer;
-            transition: background-color 0.3s;
-        }
+.add-task {
+width: 100%;
+padding: 8px;
+margin-top: 10px;
+background-color: #4a90e2;
+border: none;
+border-radius: 4px;
+color: white;
+cursor: pointer;
+transition: background-color 0.3s;
+}
 
-        .add-task:hover {
-            background-color: #357abd;
-        }
+.add-task:hover {
+background-color: #357abd;
+}
 
-        .task-input {
-            width: 100%;
-            padding: 8px;
-            margin-top: 10px;
-            background-color: #404040;
-            border: 1px solid #1e3a5f;
-            border-radius: 4px;
-            color: white;
-        }
+.task-input {
+width: 100%;
+padding: 8px;
+margin-top: 10px;
+background-color: #404040;
+border: 1px solid #1e3a5f;
+border-radius: 4px;
+color: white;
+}
 
-        .date-picker {
-            display: none;
-            position: absolute;
-            z-index: 10;
-        }
+.date-picker {
+display: none;
+position: absolute;
+z-index: 10;
+}
 
-        .date-picker input[type="date"] {
-            background-color: #404040;
-            color: white;
-            border: 1px solid #1e3a5f;
-            border-radius: 4px;
-            padding: 5px;
-        }
+.date-picker input[type="date"] {
+background-color: #404040;
+color: white;
+border: 1px solid #1e3a5f;
+border-radius: 4px;
+padding: 5px;
+}
 
-        .calendar-section {
-            margin-top: 40px;
-            background-color: #252526;
-            padding: 20px;
-            border-radius: 8px;
-            border: 1px solid #1e3a5f;
-        }
+.calendar-section {
+margin-top: 40px;
+background-color: #252526;
+padding: 20px;
+border-radius: 8px;
+border: 1px solid #1e3a5f;
+}
 
-        .calendar-section h2 {
-            color: #4a90e2;
-            text-align: center;
-            margin: 0;
-        }
+.calendar-section h2 {
+color: #4a90e2;
+text-align: center;
+margin: 0;
+}
 
-        .calendar-nav {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 10px;
-        }
+.calendar-nav {
+display: flex;
+justify-content: space-between;
+align-items: center;
+margin-bottom: 10px;
+}
 
-        .calendar-nav button {
-            background-color: #4a90e2;
-            border: none;
-            padding: 5px 10px;
-            border-radius: 4px;
-            color: white;
-            cursor: pointer;
-        }
+.calendar-nav button {
+background-color: #4a90e2;
+border: none;
+padding: 5px 10px;
+border-radius: 4px;
+color: white;
+cursor: pointer;
+}
 
-        .calendar-nav button:hover {
-            background-color: #357abd;
-        }
+.calendar-nav button:hover {
+background-color: #357abd;
+}
 
-        .calendar-grid {
-            display: grid;
-            grid-template-columns: repeat(7, 1fr);
-            gap: 5px;
-            text-align: center;
-        }
+.calendar-grid {
+display: grid;
+grid-template-columns: repeat(7, 1fr);
+gap: 5px;
+text-align: center;
+}
 
-        .calendar-day {
-            padding: 10px;
-            background-color: #303030;
-            border-radius: 4px;
-            cursor: pointer;
-        }
+.calendar-day {
+padding: 10px;
+background-color: #303030;
+border-radius: 4px;
+cursor: pointer;
+}
 
-        .calendar-day:hover {
-            background-color: #357abd;
-        }
+.calendar-day:hover {
+background-color: #357abd;
+}
 
-        .calendar-day.has-task::after {
-            content: '•';
-            color: #e24a4a;
-            margin-left: 5px;
-        }
+.calendar-day.has-task::after {
+content: '•';
+color: #e24a4a;
+margin-left: 5px;
+}
 
-        .calendar-day.today {
-            background-color: #ffeb3b;
-            color: #000000;
-        }
+.calendar-day.today {
+background-color: #ffeb3b; /* Yellow highlight */
+color: #000000; /* Black text for contrast */
+}
 
-        .today-btn {
-            display: block;
-            margin: 10px auto 0;
-            background-color: #4a90e2;
-            border: none;
-            padding: 8px 16px;
-            border-radius: 4px;
-            color: white;
-            cursor: pointer;
-        }
+.today-btn {
+display: block;
+margin: 10px auto 0;
+background-color: #4a90e2;
+border: none;
+padding: 8px 16px;
+border-radius: 4px;
+color: white;
+cursor: pointer;
+}
 
-        .today-btn:hover {
-            background-color: #357abd;
-        }
-    </style>
+.today-btn:hover {
+background-color: #357abd;
+}
+</style>
 </head>
 <body>
-    <header>
-        <h1>Homework Hub</h1>
-    </header>
-    
-    <div class="container">
-        <div class="subject-grid">
-            <div class="subject-card" id="social-studies">
-                <h2>Social Studies</h2>
-                <ul class="task-list" id="social-studies-tasks"></ul>
-                <input type="text" class="task-input" placeholder="Add task...">
-                <button class="add-task" onclick="addTask('social-studies')">Add Task</button>
-            </div>
-            <div class="subject-card" id="spanish">
-                <h2>Spanish</h2>
-                <ul class="task-list" id="spanish-tasks"></ul>
-                <input type="text" class="task-input" placeholder="Add task...">
-                <button class="add-task" onclick="addTask('spanish')">Add Task</button>
-            </div>
-            <div class="subject-card" id="science">
-                <h2>Science</h2>
-                <ul class="task-list" id="science-tasks"></ul>
-                <input type="text" class="task-input" placeholder="Add task...">
-                <button class="add-task" onclick="addTask('science')">Add Task</button>
-            </div>
-            <div class="subject-card" id="language-arts">
-                <h2>Language Arts</h2>
-                <ul class="task-list" id="language-arts-tasks"></ul>
-                <input type="text" class="task-input" placeholder="Add task...">
-                <button class="add-task" onclick="addTask('language-arts')">Add Task</button>
-            </div>
-            <div class="subject-card" id="math">
-                <h2>Math</h2>
-                <ul class="task-list" id="math-tasks"></ul>
-                <input type="text" class="task-input" placeholder="Add task...">
-                <button class="add-task" onclick="addTask('math')">Add Task</button>
-            </div>
-            <div class="subject-card" id="no-courses">
-                <h2>No Courses</h2>
-                <ul class="task-list" id="no-courses-tasks"></ul>
-                <input type="text" class="task-input" placeholder="Add task...">
-                <button class="add-task" onclick="addTask('no-courses')">Add Task</button>
-            </div>
-        </div>
+<header>
+<h1>Homework Hub</h1>
+</header>
 
-        <div class="calendar-section" id="calendar-section"></div>
-    </div>
+<div class="container">
+<div class="subject-grid">
+<div class="subject-card" id="social-studies">
+<h2>Social Studies</h2>
+<ul class="task-list" id="social-studies-tasks"></ul>
+<input type="text" class="task-input" placeholder="Add task...">
+<button class="add-task" onclick="addTask('social-studies')">Add Task</button>
+</div>
+<div class="subject-card" id="spanish">
+<h2>Spanish</h2>
+<ul class="task-list" id="spanish-tasks"></ul>
+<input type="text" class="task-input" placeholder="Add task...">
+<button class="add-task" onclick="addTask('spanish')">Add Task</button>
+</div>
+<div class="subject-card" id="science">
+<h2>Science</h2>
+<ul class="task-list" id="science-tasks"></ul>
+<input type="text" class="task-input" placeholder="Add task...">
+<button class="add-task" onclick="addTask('science')">Add Task</button>
+</div>
+<div class="subject-card" id="language-arts">
+<h2>Language Arts</h2>
+<ul class="task-list" id="language-arts-tasks"></ul>
+<input type="text" class="task-input" placeholder="Add task...">
+<button class="add-task" onclick="addTask('language-arts')">Add Task</button>
+</div>
+<div class="subject-card" id="math">
+<h2>Math</h2>
+<ul class="task-list" id="math-tasks"></ul>
+<input type="text" class="task-input" placeholder="Add task...">
+<button class="add-task" onclick="addTask('math')">Add Task</button>
+</div>
+<div class="subject-card" id="no-courses">
+<h2>No Courses</h2>
+<ul class="task-list" id="no-courses-tasks"></ul>
+<input type="text" class="task-input" placeholder="Add task...">
+<button class="add-task" onclick="addTask('no-courses')">Add Task</button>
+</div>
+</div>
 
-    <script>
-        const subjects = ['social-studies', 'spanish', 'science', 'language-arts', 'math', 'no-courses'];
-        let allTasks = {};
-        let currentMonthOffset = 0;
+<div class="calendar-section" id="calendar-section"></div>
+</div>
 
-        // Load saved tasks and initialize calendar
-        window.onload = function() {
-            subjects.forEach(subject => {
-                const savedTasks = JSON.parse(localStorage.getItem(subject + 'Tasks')) || [];
-                allTasks[subject] = savedTasks;
-                savedTasks.forEach(task => {
-                    createTaskElement(subject, task.text, task.completed, task.dueDate);
-                });
-            });
-            renderCalendar();
-            setInterval(checkDateChange, 60000);
-            if ('Notification' in window) {
-                Notification.requestPermission().then(permission => {
-                    if (permission === 'granted') {
-                        checkDueDates();
-                    }
-                });
-            }
-        };
+<script>
+const subjects = ['social-studies', 'spanish', 'science', 'language-arts', 'math', 'no-courses'];
+let allTasks = {};
+let currentMonthOffset = 0;
 
-        function checkDateChange() {
-            const now = new Date();
-            const lastDate = localStorage.getItem('lastDate');
-            if (!lastDate || new Date(lastDate).getDate() !== now.getDate()) {
-                localStorage.setItem('lastDate', now);
-                renderCalendar();
-            }
-        }
+// Load saved tasks and initialize calendar
+window.onload = function() {
+subjects.forEach(subject => {
+const savedTasks = JSON.parse(localStorage.getItem(subject + 'Tasks')) || [];
+allTasks[subject] = savedTasks;
+savedTasks.forEach(task => {
+createTaskElement(subject, task.text, task.completed, task.dueDate);
+});
+});
+renderCalendar();
+setInterval(checkDateChange, 60000);
+if ('Notification' in window) {
+Notification.requestPermission().then(permission => {
+if (permission === 'granted') {
+checkDueDates();
+}
+});
+}
+};
 
-        function addTask(subject) {
-            const input = document.querySelector(`#${subject} .task-input`);
-            const taskText = input.value.trim();
-            
-            if (taskText) {
-                createTaskElement(subject, taskText, false, null);
-                saveTask(subject, taskText, false, null);
-                input.value = '';
-            }
-        }
+function checkDateChange() {
+const now = new Date();
+const lastDate = localStorage.getItem('lastDate');
+if (!lastDate || new Date(lastDate).getDate() !== now.getDate()) {
+localStorage.setItem('lastDate', now);
+renderCalendar();
+}
+}
 
-        function createTaskElement(subject, text, completed, dueDate) {
-            const taskList = document.getElementById(`${subject}-tasks`);
-            const li = document.createElement('li');
-            li.className = 'task-item';
-            if (completed) li.classList.add('completed');
-            
-            const checkbox = document.createElement('input');
-            checkbox.type = 'checkbox';
-            checkbox.checked = completed;
-            checkbox.onchange = () => updateTaskStatus(subject, text, checkbox.checked, li);
-            
-            const span = document.createElement('span');
-            span.textContent = text + (dueDate ? ` (Due: ${dueDate})` : '');
-            if (completed) span.style.textDecoration = 'line-through';
-            
-            const calendarBtn = document.createElement('button');
-            calendarBtn.className = 'calendar-btn';
-            calendarBtn.textContent = '📅';
-            calendarBtn.onclick = () => showDatePicker(subject, text, calendarBtn);
+function addTask(subject) {
+const input = document.querySelector(`#${subject} .task-input`);
+const taskText = input.value.trim();
 
-            const deleteBtn = document.createElement('button');
-            deleteBtn.className = 'delete-btn';
-            deleteBtn.textContent = '✖';
-            deleteBtn.onclick = () => deleteTask(subject, text, li);
+if (taskText) {
+createTaskElement(subject, taskText, false, null);
+saveTask(subject, taskText, false, null);
+input.value = '';
+}
+}
 
-            li.appendChild(checkbox);
-            li.appendChild(span);
-            li.appendChild(calendarBtn);
-            li.appendChild(deleteBtn);
-            taskList.appendChild(li);
-        }
+function createTaskElement(subject, text, completed, dueDate) {
+const taskList = document.getElementById(`${subject}-tasks`);
+const li = document.createElement('li');
+li.className = 'task-item';
+if (completed) li.classList.add('completed');
 
-        function saveTask(subject, text, completed, dueDate) {
-            const savedTasks = JSON.parse(localStorage.getItem(subject + 'Tasks')) || [];
-            savedTasks.push({ text, completed, dueDate });
-            localStorage.setItem(subject + 'Tasks', JSON.stringify(savedTasks));
-            allTasks[subject] = savedTasks;
-            renderCalendar();
-            if ('Notification' in window && Notification.permission === 'granted') {
-                checkDueDates();
-            }
-        }
+const checkbox = document.createElement('input');
+checkbox.type = 'checkbox';
+checkbox.checked = completed;
+checkbox.onchange = () => updateTaskStatus(subject, text, checkbox.checked, li);
 
-        function updateTaskStatus(subject, text, completed, li) {
-            let savedTasks = JSON.parse(localStorage.getItem(subject + 'Tasks')) || [];
-            savedTasks = savedTasks.map(task => 
-                task.text === text ? { ...task, completed } : task
-            );
-            localStorage.setItem(subject + 'Tasks', JSON.stringify(savedTasks));
-            allTasks[subject] = savedTasks;
-            
-            const span = li.querySelector('span');
-            span.style.textDecoration = completed ? 'line-through' : 'none';
-            li.classList.toggle('completed', completed);
-        }
+const span = document.createElement('span');
+span.textContent = text + (dueDate ? ` (Due: ${dueDate})` : '');
+if (completed) span.style.textDecoration = 'line-through';
 
-        function deleteTask(subject, text, li) {
-            let savedTasks = JSON.parse(localStorage.getItem(subject + 'Tasks')) || [];
-            savedTasks = savedTasks.filter(task => task.text !== text);
-            localStorage.setItem(subject + 'Tasks', JSON.stringify(savedTasks));
-            allTasks[subject] = savedTasks;
-            li.remove();
-            renderCalendar();
-        }
+const calendarBtn = document.createElement('button');
+calendarBtn.className = 'calendar-btn';
+calendarBtn.textContent = '📅';
+calendarBtn.onclick = () => showDatePicker(subject, text, calendarBtn);
 
-        function showDatePicker(subject, text, button) {
-            let datePicker = document.querySelector('.date-picker');
-            if (datePicker) datePicker.remove();
+const deleteBtn = document.createElement('button');
+deleteBtn.className = 'delete-btn';
+deleteBtn.textContent = '✖';
+deleteBtn.onclick = () => deleteTask(subject, text, li);
 
-            datePicker = document.createElement('div');
-            datePicker.className = 'date-picker';
-            const rect = button.getBoundingClientRect();
-            datePicker.style.left = `${rect.left}px`;
-            datePicker.style.top = `${rect.bottom + window.scrollY}px`;
+li.appendChild(checkbox);
+li.appendChild(span);
+li.appendChild(calendarBtn);
+li.appendChild(deleteBtn);
+taskList.appendChild(li);
+}
 
-            const input = document.createElement('input');
-            input.type = 'date';
-            input.onchange = () => {
-                const [year, month, day] = input.value.split('-'); // e.g., "2025-03-23" -> ["2025", "03", "23"]
-                const selectedDate = new Date(Date.UTC(year, month - 1, day)); // UTC to avoid timezone shift
-                const dueDate = selectedDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-                updateDueDate(subject, text, dueDate);
-                datePicker.remove();
-            };
-            datePicker.appendChild(input);
-            document.body.appendChild(datePicker);
-            datePicker.style.display = 'block';
-            input.focus();
-        }
+function saveTask(subject, text, completed, dueDate) {
+const savedTasks = JSON.parse(localStorage.getItem(subject + 'Tasks')) || [];
+savedTasks.push({ text, completed, dueDate });
+localStorage.setItem(subject + 'Tasks', JSON.stringify(savedTasks));
+allTasks[subject] = savedTasks;
+renderCalendar();
+if ('Notification' in window && Notification.permission === 'granted') {
+checkDueDates();
+}
+}
 
-        function updateDueDate(subject, text, dueDate) {
-            let savedTasks = JSON.parse(localStorage.getItem(subject + 'Tasks')) || [];
-            savedTasks = savedTasks.map(task => 
-                task.text === text ? { ...task, dueDate } : task
-            );
-            localStorage.setItem(subject + 'Tasks', JSON.stringify(savedTasks));
-            allTasks[subject] = savedTasks;
-            
-            const taskList = document.getElementById(`${subject}-tasks`);
-            const tasks = taskList.getElementsByTagName('li');
-            for (let task of tasks) {
-                const span = task.querySelector('span');
-                if (span.textContent.startsWith(text)) {
-                    span.textContent = `${text} (Due: ${dueDate})`;
-                    if (task.querySelector('input').checked) span.style.textDecoration = 'line-through';
-                    break;
-                }
-            }
-            renderCalendar();
-            if ('Notification' in window && Notification.permission === 'granted') {
-                checkDueDates();
-            }
-        }
+function updateTaskStatus(subject, text, completed, li) {
+let savedTasks = JSON.parse(localStorage.getItem(subject + 'Tasks')) || [];
+savedTasks = savedTasks.map(task => 
+task.text === text ? { ...task, completed } : task
+);
+localStorage.setItem(subject + 'Tasks', JSON.stringify(savedTasks));
+allTasks[subject] = savedTasks;
 
-        function renderCalendar() {
-            const calendarSection = document.getElementById('calendar-section');
-            calendarSection.innerHTML = '';
-            const today = new Date();
-            const startMonth = new Date(today.getFullYear(), today.getMonth() + currentMonthOffset, 1);
+const span = li.querySelector('span');
+span.style.textDecoration = completed ? 'line-through' : 'none';
+li.classList.toggle('completed', completed);
+}
 
-            for (let i = 0; i < 3; i++) {
-                const monthDate = new Date(startMonth.getFullYear(), startMonth.getMonth() + i, 1);
-                const monthDiv = document.createElement('div');
-                monthDiv.className = 'month';
+function deleteTask(subject, text, li) {
+let savedTasks = JSON.parse(localStorage.getItem(subject + 'Tasks')) || [];
+savedTasks = savedTasks.filter(task => task.text !== text);
+localStorage.setItem(subject + 'Tasks', JSON.stringify(savedTasks));
+allTasks[subject] = savedTasks;
+li.remove();
+renderCalendar();
+}
 
-                const navDiv = document.createElement('div');
-                navDiv.className = 'calendar-nav';
-                const prevBtn = document.createElement('button');
-                prevBtn.textContent = '◄';
-                prevBtn.onclick = () => { currentMonthOffset--; renderCalendar(); };
-                const title = document.createElement('h2');
-                title.textContent = monthDate.toLocaleString('en-US', { month: 'long', year: 'numeric' });
-                const nextBtn = document.createElement('button');
-                nextBtn.textContent = '►';
-                nextBtn.onclick = () => { currentMonthOffset++; renderCalendar(); };
-                navDiv.appendChild(prevBtn);
-                navDiv.appendChild(title);
-                navDiv.appendChild(nextBtn);
-                monthDiv.appendChild(navDiv);
+function showDatePicker(subject, text, button) {
+let datePicker = document.querySelector('.date-picker');
+if (datePicker) datePicker.remove();
 
-                const grid = document.createElement('div');
-                grid.className = 'calendar-grid';
+datePicker = document.createElement('div');
+datePicker.className = 'date-picker';
+const rect = button.getBoundingClientRect();
+datePicker.style.left = `${rect.left}px`;
+datePicker.style.top = `${rect.bottom + window.scrollY}px`;
 
-                const daysInMonth = new Date(monthDate.getFullYear(), monthDate.getMonth() + 1, 0).getDate();
-                const firstDay = monthDate.getDay();
+const input = document.createElement('input');
+input.type = 'date';
+input.onchange = () => {
+        const selectedDate = new Date(input.value);
+        const [year, month, day] = input.value.split('-');
+        const selectedDate = new Date(Date.UTC(year, month - 1, day));
+const dueDate = selectedDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+updateDueDate(subject, text, dueDate);
+datePicker.remove();
+};
+datePicker.appendChild(input);
+document.body.appendChild(datePicker);
+datePicker.style.display = 'block';
+input.focus();
+}
 
-                for (let j = 0; j < firstDay; j++) {
-                    const emptyDay = document.createElement('div');
-                    emptyDay.className = 'calendar-day';
-                    grid.appendChild(emptyDay);
-                }
+function updateDueDate(subject, text, dueDate) {
+let savedTasks = JSON.parse(localStorage.getItem(subject + 'Tasks')) || [];
+savedTasks = savedTasks.map(task => 
+task.text === text ? { ...task, dueDate } : task
+);
+localStorage.setItem(subject + 'Tasks', JSON.stringify(savedTasks));
+allTasks[subject] = savedTasks;
 
-                for (let day = 1; day <= daysInMonth; day++) {
-                    const dayEl = document.createElement('div');
-                    dayEl.className = 'calendar-day';
-                    dayEl.textContent = day;
+const taskList = document.getElementById(`${subject}-tasks`);
+const tasks = taskList.getElementsByTagName('li');
+for (let task of tasks) {
+const span = task.querySelector('span');
+if (span.textContent.startsWith(text)) {
+span.textContent = `${text} (Due: ${dueDate})`;
+if (task.querySelector('input').checked) span.style.textDecoration = 'line-through';
+break;
+}
+}
+renderCalendar();
+if ('Notification' in window && Notification.permission === 'granted') {
+checkDueDates();
+}
+}
 
-                    const currentDate = new Date();
-                    if (monthDate.getMonth() === currentDate.getMonth() &&
-                        monthDate.getFullYear() === currentDate.getFullYear() &&
-                        day === currentDate.getDate()) {
-                        dayEl.classList.add('today');
-                    }
+function renderCalendar() {
+const calendarSection = document.getElementById('calendar-section');
+calendarSection.innerHTML = '';
+const today = new Date(); // Real current date
+const startMonth = new Date(today.getFullYear(), today.getMonth() + currentMonthOffset, 1);
 
-                    const tasksForDay = [];
-                    subjects.forEach(subject => {
-                        const tasks = allTasks[subject] || [];
-                        tasks.forEach(task => {
-                            if (task.dueDate && task.dueDate === `${monthDate.toLocaleString('en-US', { month: 'short' })} ${day}`) {
-                                tasksForDay.push({ subject, text: task.text });
-                                dayEl.classList.add('has-task');
-                            }
-                        });
-                    });
+for (let i = 0; i < 3; i++) {
+const monthDate = new Date(startMonth.getFullYear(), startMonth.getMonth() + i, 1);
+const monthDiv = document.createElement('div');
+monthDiv.className = 'month';
 
-                    if (tasksForDay.length > 0) {
-                        dayEl.onclick = () => {
-                            const taskList = tasksForDay.map(t => `${t.text} (${t.subject.replace('-', ' ')})`).join('\n');
-                            alert(`Tasks for ${monthDate.toLocaleString('en-US', { month: 'short' })} ${day}:\n${taskList}`);
-                        };
-                    }
-                    grid.appendChild(dayEl);
-                }
-                monthDiv.appendChild(grid);
-                calendarSection.appendChild(monthDiv);
-            }
+const navDiv = document.createElement('div');
+navDiv.className = 'calendar-nav';
+const prevBtn = document.createElement('button');
+prevBtn.textContent = '◄';
+prevBtn.onclick = () => { currentMonthOffset--; renderCalendar(); };
+const title = document.createElement('h2');
+title.textContent = monthDate.toLocaleString('en-US', { month: 'long', year: 'numeric' });
+const nextBtn = document.createElement('button');
+nextBtn.textContent = '►';
+nextBtn.onclick = () => { currentMonthOffset++; renderCalendar(); };
+navDiv.appendChild(prevBtn);
+navDiv.appendChild(title);
+navDiv.appendChild(nextBtn);
+monthDiv.appendChild(navDiv);
 
-            const todayBtn = document.createElement('button');
-            todayBtn.className = 'today-btn';
-            todayBtn.textContent = 'Today';
-            todayBtn.onclick = () => {
-                const now = new Date();
-                const start = new Date(now.getFullYear(), now.getMonth(), 1);
-                currentMonthOffset = (start.getFullYear() - today.getFullYear()) * 12 + (start.getMonth() - today.getMonth());
-                renderCalendar();
-            };
-            calendarSection.appendChild(todayBtn);
-        }
+const grid = document.createElement('div');
+grid.className = 'calendar-grid';
 
-        document.querySelectorAll('.task-input').forEach(input => {
-            input.addEventListener('keypress', function(e) {
-                if (e.key === 'Enter') {
-                    const subject = this.parentElement.id;
-                    addTask(subject);
-                }
-            });
-        });
+const daysInMonth = new Date(monthDate.getFullYear(), monthDate.getMonth() + 1, 0).getDate();
+const firstDay = monthDate.getDay();
 
-        document.addEventListener('click', (e) => {
-            const datePicker = document.querySelector('.date-picker');
-            if (datePicker && !datePicker.contains(e.target) && !e.target.classList.contains('calendar-btn')) {
-                datePicker.remove();
-            }
-        });
+for (let j = 0; j < firstDay; j++) {
+const emptyDay = document.createElement('div');
+emptyDay.className = 'calendar-day';
+grid.appendChild(emptyDay);
+}
 
-        function checkDueDates() {
-            const tomorrow = new Date();
-            tomorrow.setDate(tomorrow.getDate() + 1);
-            const tomorrowStr = tomorrow.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+for (let day = 1; day <= daysInMonth; day++) {
+const dayEl = document.createElement('div');
+dayEl.className = 'calendar-day';
+dayEl.textContent = day;
 
-            subjects.forEach(subject => {
-                const tasks = allTasks[subject] || [];
-                tasks.forEach(task => {
-                    if (task.dueDate === tomorrowStr && !task.completed) {
-                        new Notification(`Assignment Due Tomorrow`, {
-                            body: `"${task.text}" for ${subject.replace('-', ' ')} is due on ${task.dueDate}.`,
-                            icon: 'https://via.placeholder.com/192',
-                            vibrate: [200, 100, 200]
-                        });
-                    }
-                });
-            });
-        }
-    </script>
+// Highlight today
+const currentDate = new Date();
+if (monthDate.getMonth() === currentDate.getMonth() &&
+monthDate.getFullYear() === currentDate.getFullYear() &&
+day === currentDate.getDate()) {
+dayEl.classList.add('today');
+}
+
+const tasksForDay = [];
+subjects.forEach(subject => {
+const tasks = allTasks[subject] || [];
+tasks.forEach(task => {
+if (task.dueDate && task.dueDate === `${monthDate.toLocaleString('en-US', { month: 'short' })} ${day}`) {
+tasksForDay.push({ subject, text: task.text });
+dayEl.classList.add('has-task');
+}
+});
+});
+
+if (tasksForDay.length > 0) {
+dayEl.onclick = () => {
+const taskList = tasksForDay.map(t => `${t.text} (${t.subject.replace('-', ' ')})`).join('\n');
+alert(`Tasks for ${monthDate.toLocaleString('en-US', { month: 'short' })} ${day}:\n${taskList}`);
+};
+}
+grid.appendChild(dayEl);
+}
+monthDiv.appendChild(grid);
+calendarSection.appendChild(monthDiv);
+}
+
+const todayBtn = document.createElement('button');
+todayBtn.className = 'today-btn';
+todayBtn.textContent = 'Today';
+todayBtn.onclick = () => {
+const now = new Date();
+const start = new Date(now.getFullYear(), now.getMonth(), 1);
+currentMonthOffset = (start.getFullYear() - today.getFullYear()) * 12 + (start.getMonth() - today.getMonth());
+renderCalendar();
+};
+calendarSection.appendChild(todayBtn);
+}
+
+// Add tasks with Enter key
+document.querySelectorAll('.task-input').forEach(input => {
+input.addEventListener('keypress', function(e) {
+if (e.key === 'Enter') {
+const subject = this.parentElement.id;
+addTask(subject);
+}
+});
+});
+
+// Close date picker when clicking outside
+document.addEventListener('click', (e) => {
+const datePicker = document.querySelector('.date-picker');
+if (datePicker && !datePicker.contains(e.target) && !e.target.classList.contains('calendar-btn')) {
+datePicker.remove();
+}
+});
+function checkDueDates() {
+const tomorrow = new Date();
+tomorrow.setDate(tomorrow.getDate() + 1);
+const tomorrowStr = tomorrow.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+
+subjects.forEach(subject => {
+const tasks = allTasks[subject] || [];
+tasks.forEach(task => {
+if (task.dueDate === tomorrowStr && !task.completed) {
+new Notification(`Assignment Due Tomorrow`, {
+body: `"${task.text}" for ${subject.replace('-', ' ')} is due on ${task.dueDate}.`,
+icon: 'https://via.placeholder.com/192',
+vibrate: [200, 100, 200]
+});
+}
+});
+});
+}      
+</script>
 </body>
 </html>
