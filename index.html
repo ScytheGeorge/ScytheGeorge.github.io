@@ -403,22 +403,121 @@
     const rect = button.getBoundingClientRect();
     datePicker.style.left = `${rect.left}px`;
     datePicker.style.top = `${rect.bottom + window.scrollY}px`;
+    datePicker.style.background = '#252526';
+    datePicker.style.border = '1px solid #1e3a5f';
+    datePicker.style.borderRadius = '8px';
+    datePicker.style.padding = '10px';
+    datePicker.style.boxShadow = '0 4px 8px rgba(0, 0, 0, 0.3)';
+    datePicker.style.zIndex = '100';
 
-    const input = document.createElement('input');
-    input.type = 'date';
-    input.onchange = () => {
-        const [year, month, day] = input.value.split('-');
-        const selectedDate = new Date(Date.UTC(year, month - 1, day));
-        const dueDate = selectedDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-        updateDueDate(subject, text, dueDate);
-        datePicker.remove();
+    const today = new Date();
+    let currentMonth = today.getMonth();
+    let currentYear = today.getFullYear();
+
+    const header = document.createElement('div');
+    header.style.display = 'flex';
+    header.style.justifyContent = 'space-between';
+    header.style.alignItems = 'center';
+    header.style.marginBottom = '10px';
+
+    const prev = document.createElement('button');
+    prev.textContent = '◄';
+    prev.style.background = '#4a90e2';
+    prev.style.border = 'none';
+    prev.style.color = 'white';
+    prev.style.padding = '5px 10px';
+    prev.style.borderRadius = '4px';
+    prev.style.cursor = 'pointer';
+    prev.onclick = () => {
+        currentMonth--;
+        if (currentMonth < 0) {
+            currentMonth = 11;
+            currentYear--;
+        }
+        renderCalendarGrid();
     };
-    datePicker.appendChild(input);
-    document.body.appendChild(datePicker);
-    datePicker.style.display = 'block';
-    input.focus();
-}
 
+    const monthYear = document.createElement('span');
+    monthYear.style.color = '#4a90e2';
+    monthYear.style.fontWeight = 'bold';
+
+    const next = document.createElement('button');
+    next.textContent = '►';
+    next.style.background = '#4a90e2';
+    next.style.border = 'none';
+    next.style.color = 'white';
+    next.style.padding = '5px 10px';
+    next.style.borderRadius = '4px';
+    next.style.cursor = 'pointer';
+    next.onclick = () => {
+        currentMonth++;
+        if (currentMonth > 11) {
+            currentMonth = 0;
+            currentYear++;
+        }
+        renderCalendarGrid();
+    };
+
+    header.appendChild(prev);
+    header.appendChild(monthYear);
+    header.appendChild(next);
+    datePicker.appendChild(header);
+
+    const grid = document.createElement('div');
+    grid.style.display = 'grid';
+    grid.style.gridTemplateColumns = 'repeat(7, 30px)';
+    grid.style.gap = '5px';
+    grid.style.textAlign = 'center';
+    datePicker.appendChild(grid);
+
+    function renderCalendarGrid() {
+        grid.innerHTML = '';
+        monthYear.textContent = new Date(currentYear, currentMonth).toLocaleString('en-US', { month: 'long', year: 'numeric' });
+
+        const days = ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'];
+        days.forEach(day => {
+            const dayEl = document.createElement('div');
+            dayEl.textContent = day;
+            dayEl.style.color = '#4a90e2';
+            dayEl.style.fontSize = '12px';
+            grid.appendChild(dayEl);
+        });
+
+        const firstDay = new Date(currentYear, currentMonth, 1).getDay();
+        const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
+
+        for (let i = 0; i < firstDay; i++) {
+            const empty = document.createElement('div');
+            grid.appendChild(empty);
+        }
+
+        for (let day = 1; day <= daysInMonth; day++) {
+            const dayEl = document.createElement('div');
+            dayEl.textContent = day;
+            dayEl.style.cursor = 'pointer';
+            dayEl.style.padding = '5px';
+            dayEl.style.borderRadius = '4px';
+            dayEl.style.background = '#303030';
+            dayEl.style.color = 'white';
+            dayEl.onmouseover = () => dayEl.style.background = '#357abd';
+            dayEl.onmouseout = () => dayEl.style.background = '#303030';
+            dayEl.onclick = () => {
+                const selectedDate = new Date(Date.UTC(currentYear, currentMonth, day));
+                const dueDate = selectedDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+                updateDueDate(subject, text, dueDate);
+                datePicker.remove();
+            };
+            if (currentYear === today.getFullYear() && currentMonth === today.getMonth() && day === today.getDate()) {
+                dayEl.style.background = '#ffeb3b';
+                dayEl.style.color = '#000000';
+            }
+            grid.appendChild(dayEl);
+        }
+    }
+
+    renderCalendarGrid();
+    document.body.appendChild(datePicker);
+}
         function updateDueDate(subject, text, dueDate) {
     let savedTasks = JSON.parse(localStorage.getItem(subject + 'Tasks')) || [];
     savedTasks = savedTasks.map(task => 
