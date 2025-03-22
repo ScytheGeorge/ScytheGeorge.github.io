@@ -398,7 +398,9 @@
     const input = document.createElement('input');
     input.type = 'date';
     input.onchange = () => {
-        const dueDate = new Date(input.value).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+        const [year, month, day] = input.value.split('-');
+        const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+        const dueDate = `${months[parseInt(month) - 1]} ${parseInt(day)}`;
         updateDueDate(subject, text, dueDate);
         datePicker.remove();
     };
