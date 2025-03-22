@@ -398,9 +398,7 @@
     const input = document.createElement('input');
     input.type = 'date';
     input.onchange = () => {
-        const [year, month, day] = input.value.split('-');
-        const selectedDate = new Date(Date.UTC(year, month - 1, day));
-        const dueDate = selectedDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+        const dueDate = new Date(input.value).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
         updateDueDate(subject, text, dueDate);
         datePicker.remove();
     };
