@@ -386,27 +386,29 @@
         }
 
         function showDatePicker(subject, text, button) {
-            let datePicker = document.querySelector('.date-picker');
-            if (datePicker) datePicker.remove();
+    let datePicker = document.querySelector('.date-picker');
+    if (datePicker) datePicker.remove();
 
-            datePicker = document.createElement('div');
-            datePicker.className = 'date-picker';
-            const rect = button.getBoundingClientRect();
-            datePicker.style.left = `${rect.left}px`;
-            datePicker.style.top = `${rect.bottom + window.scrollY}px`;
+    datePicker = document.createElement('div');
+    datePicker.className = 'date-picker';
+    const rect = button.getBoundingClientRect();
+    datePicker.style.left = `${rect.left}px`;
+    datePicker.style.top = `${rect.bottom + window.scrollY}px`;
 
-            const input = document.createElement('input');
-            input.type = 'date';
-            input.onchange = () => {
-                const dueDate = new Date(input.value).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-                updateDueDate(subject, text, dueDate);
-                datePicker.remove();
-            };
-            datePicker.appendChild(input);
-            document.body.appendChild(datePicker);
-            datePicker.style.display = 'block';
-            input.focus();
-        }
+    const input = document.createElement('input');
+    input.type = 'date';
+    input.onchange = () => {
+        const [year, month, day] = input.value.split('-');
+        const selectedDate = new Date(Date.UTC(year, month - 1, day));
+        const dueDate = selectedDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+        updateDueDate(subject, text, dueDate);
+        datePicker.remove();
+    };
+    datePicker.appendChild(input);
+    document.body.appendChild(datePicker);
+    datePicker.style.display = 'block';
+    input.focus();
+}
 
         function updateDueDate(subject, text, dueDate) {
             let savedTasks = JSON.parse(localStorage.getItem(subject + 'Tasks')) || [];
