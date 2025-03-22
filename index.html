@@ -399,8 +399,9 @@
     if (datePicker) datePicker.remove();
 
     datePicker = document.createElement('div');
-    datePicker.className = 'date-picker';
+    datePicker.className = 'date-picker modern-date-picker';
     const rect = button.getBoundingClientRect();
+    datePicker.style.position = 'absolute';
     datePicker.style.left = `${rect.left}px`;
     datePicker.style.top = `${rect.bottom + window.scrollY}px`;
     datePicker.style.background = '#252526';
@@ -436,6 +437,89 @@
         }
         renderCalendarGrid();
     };
+
+    const monthYear = document.createElement('span');
+    monthYear.style.color = '#4a90e2';
+    monthYear.style.fontWeight = 'bold';
+
+    const next = document.createElement('button');
+    next.textContent = '►';
+    next.style.background = '#4a90e2';
+    next.style.border = 'none';
+    next.style.color = 'white';
+    next.style.padding = '5px 10px';
+    next.style.borderRadius = '4px';
+    next.style.cursor = 'pointer';
+    next.onclick = () => {
+        currentMonth++;
+        if (currentMonth > 11) {
+            currentMonth = 0;
+            currentYear++;
+        }
+        renderCalendarGrid();
+    };
+
+    header.appendChild(prev);
+    header.appendChild(monthYear);
+    header.appendChild(next);
+    datePicker.appendChild(header);
+
+    const grid = document.createElement('div');
+    grid.style.display = 'grid';
+    grid.style.gridTemplateColumns = 'repeat(7, 30px)';
+    grid.style.gap = '5px';
+    grid.style.textAlign = 'center';
+    datePicker.appendChild(grid);
+
+    function renderCalendarGrid() {
+        grid.innerHTML = '';
+        monthYear.textContent = new Date(currentYear, currentMonth).toLocaleString('en-US', { month: 'long', year: 'numeric' });
+
+        const days = ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'];
+        days.forEach(day => {
+            const dayEl = document.createElement('div');
+            dayEl.textContent = day;
+            dayEl.style.color = '#4a90e2';
+            dayEl.style.fontSize = '12px';
+            grid.appendChild(dayEl);
+        });
+
+        const firstDay = new Date(currentYear, currentMonth, 1).getDay();
+        const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
+
+        for (let i = 0; i < firstDay; i++) {
+            const empty = document.createElement('div');
+            grid.appendChild(empty);
+        }
+
+        for (let day = 1; day <= daysInMonth; day++) {
+            const dayEl = document.createElement('div');
+            dayEl.textContent = day;
+            dayEl.style.cursor = 'pointer';
+            dayEl.style.padding = '5px';
+            dayEl.style.borderRadius = '4px';
+            dayEl.style.background = '#303030';
+            dayEl.style.color = 'white';
+            dayEl.onmouseover = () => dayEl.style.background = '#357abd';
+            dayEl.onmouseout = () => dayEl.style.background = '#303030';
+            dayEl.onclick = () => {
+                const selectedDate = new Date(Date.UTC(currentYear, currentMonth, day));
+                const dueDate = selectedDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+                updateDueDate(subject, text, dueDate);
+                datePicker.remove();
+            };
+            if (currentYear === today.getFullYear() && currentMonth === today.getMonth() && day === today.getDate()) {
+                dayEl.style.background = '#ffeb3b';
+                dayEl.style.color = '#000000';
+            }
+            grid.appendChild(dayEl);
+        }
+    }
+
+    renderCalendarGrid();
+    document.body.appendChild(datePicker);
+    console.log('New modern date picker loaded');
+}
 
     const monthYear = document.createElement('span');
     monthYear.style.color = '#4a90e2';
