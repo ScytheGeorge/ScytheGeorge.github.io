@@ -399,44 +399,23 @@
     if (datePicker) datePicker.remove();
 
     datePicker = document.createElement('div');
-    datePicker.className = 'date-picker modern-date-picker-v2';
+    datePicker.className = 'date-picker';
     const rect = button.getBoundingClientRect();
-    datePicker.style.position = 'absolute';
     datePicker.style.left = `${rect.left}px`;
     datePicker.style.top = `${rect.bottom + window.scrollY}px`;
-    datePicker.style.background = '#252526';
-    datePicker.style.border = '1px solid #1e3a5f';
-    datePicker.style.borderRadius = '8px';
-    datePicker.style.padding = '10px';
-    datePicker.style.boxShadow = '0 4px 8px rgba(0, 0, 0, 0.3)';
-    datePicker.style.zIndex = '1000';
 
-    const today = new Date();
-    let currentMonth = today.getMonth();
-    let currentYear = today.getFullYear();
-
-    const header = document.createElement('div');
-    header.style.display = 'flex';
-    header.style.justifyContent = 'space-between';
-    header.style.alignItems = 'center';
-    header.style.marginBottom = '10px';
-
-    const prev = document.createElement('button');
-    prev.textContent = '◄';
-    prev.style.background = '#4a90e2';
-    prev.style.border = 'none';
-    prev.style.color = 'white';
-    prev.style.padding = '5px 10px';
-    prev.style.borderRadius = '4px';
-    prev.style.cursor = 'pointer';
-    prev.onclick = () => {
-        currentMonth--;
-        if (currentMonth < 0) {
-            currentMonth = 11;
-            currentYear--;
-        }
-        renderCalendarGrid();
+    const input = document.createElement('input');
+    input.type = 'date';
+    input.onchange = () => {
+        const dueDate = new Date(input.value).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+        updateDueDate(subject, text, dueDate);
+        datePicker.remove();
     };
+    datePicker.appendChild(input);
+    document.body.appendChild(datePicker);
+    datePicker.style.display = 'block';
+    input.focus();
+}
 
     const monthYear = document.createElement('span');
     monthYear.style.color = '#4a90e2';
