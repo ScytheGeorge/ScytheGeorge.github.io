@@ -216,8 +216,8 @@
         }
 
         .calendar-day.today {
-            background-color: #ffeb3b; /* Yellow highlight */
-            color: #000000; /* Black text for contrast */
+            background-color: #ffeb3b;
+            color: #000000;
         }
 
         .today-btn {
@@ -291,23 +291,23 @@
 
         // Load saved tasks and initialize calendar
         window.onload = function() {
-    subjects.forEach(subject => {
-        const savedTasks = JSON.parse(localStorage.getItem(subject + 'Tasks')) || [];
-        allTasks[subject] = savedTasks;
-        savedTasks.forEach(task => {
-            createTaskElement(subject, task.text, task.completed, task.dueDate);
-        });
-    });
-    renderCalendar();
-    setInterval(checkDateChange, 60000);
-    if ('Notification' in window) {
-        Notification.requestPermission().then(permission => {
-            if (permission === 'granted') {
-                checkDueDates();
+            subjects.forEach(subject => {
+                const savedTasks = JSON.parse(localStorage.getItem(subject + 'Tasks')) || [];
+                allTasks[subject] = savedTasks;
+                savedTasks.forEach(task => {
+                    createTaskElement(subject, task.text, task.completed, task.dueDate);
+                });
+            });
+            renderCalendar();
+            setInterval(checkDateChange, 60000);
+            if ('Notification' in window) {
+                Notification.requestPermission().then(permission => {
+                    if (permission === 'granted') {
+                        checkDueDates();
+                    }
+                });
             }
-        });
-    }
-};
+        };
 
         function checkDateChange() {
             const now = new Date();
@@ -362,15 +362,15 @@
         }
 
         function saveTask(subject, text, completed, dueDate) {
-    const savedTasks = JSON.parse(localStorage.getItem(subject + 'Tasks')) || [];
-    savedTasks.push({ text, completed, dueDate });
-    localStorage.setItem(subject + 'Tasks', JSON.stringify(savedTasks));
-    allTasks[subject] = savedTasks;
-    renderCalendar();
-    if ('Notification' in window && Notification.permission === 'granted') {
-        checkDueDates();
-    }
-}
+            const savedTasks = JSON.parse(localStorage.getItem(subject + 'Tasks')) || [];
+            savedTasks.push({ text, completed, dueDate });
+            localStorage.setItem(subject + 'Tasks', JSON.stringify(savedTasks));
+            allTasks[subject] = savedTasks;
+            renderCalendar();
+            if ('Notification' in window && Notification.permission === 'granted') {
+                checkDueDates();
+            }
+        }
 
         function updateTaskStatus(subject, text, completed, li) {
             let savedTasks = JSON.parse(localStorage.getItem(subject + 'Tasks')) || [];
@@ -395,303 +395,58 @@
         }
 
         function showDatePicker(subject, text, button) {
-    let datePicker = document.querySelector('.date-picker');
-    if (datePicker) datePicker.remove();
+            let datePicker = document.querySelector('.date-picker');
+            if (datePicker) datePicker.remove();
 
-    datePicker = document.createElement('div');
-    datePicker.className = 'date-picker';
-    const rect = button.getBoundingClientRect();
-    datePicker.style.left = `${rect.left}px`;
-    datePicker.style.top = `${rect.bottom + window.scrollY}px`;
+            datePicker = document.createElement('div');
+            datePicker.className = 'date-picker';
+            const rect = button.getBoundingClientRect();
+            datePicker.style.left = `${rect.left}px`;
+            datePicker.style.top = `${rect.bottom + window.scrollY}px`;
 
-    const input = document.createElement('input');
-    input.type = 'date';
-    input.onchange = () => {
-        const dueDate = new Date(input.value).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-        updateDueDate(subject, text, dueDate);
-        datePicker.remove();
-    };
-    datePicker.appendChild(input);
-    document.body.appendChild(datePicker);
-    datePicker.style.display = 'block';
-    input.focus();
-}
-
-    const monthYear = document.createElement('span');
-    monthYear.style.color = '#4a90e2';
-    monthYear.style.fontWeight = 'bold';
-
-    const next = document.createElement('button');
-    next.textContent = '►';
-    next.style.background = '#4a90e2';
-    next.style.border = 'none';
-    next.style.color = 'white';
-    next.style.padding = '5px 10px';
-    next.style.borderRadius = '4px';
-    next.style.cursor = 'pointer';
-    next.onclick = () => {
-        currentMonth++;
-        if (currentMonth > 11) {
-            currentMonth = 0;
-            currentYear++;
-        }
-        renderCalendarGrid();
-    };
-
-    header.appendChild(prev);
-    header.appendChild(monthYear);
-    header.appendChild(next);
-    datePicker.appendChild(header);
-
-    const grid = document.createElement('div');
-    grid.style.display = 'grid';
-    grid.style.gridTemplateColumns = 'repeat(7, 30px)';
-    grid.style.gap = '5px';
-    grid.style.textAlign = 'center';
-    datePicker.appendChild(grid);
-
-    function renderCalendarGrid() {
-        grid.innerHTML = '';
-        monthYear.textContent = new Date(currentYear, currentMonth).toLocaleString('en-US', { month: 'long', year: 'numeric' });
-
-        const days = ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'];
-        days.forEach(day => {
-            const dayEl = document.createElement('div');
-            dayEl.textContent = day;
-            dayEl.style.color = '#4a90e2';
-            dayEl.style.fontSize = '12px';
-            grid.appendChild(dayEl);
-        });
-
-        const firstDay = new Date(currentYear, currentMonth, 1).getDay();
-        const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
-
-        for (let i = 0; i < firstDay; i++) {
-            const empty = document.createElement('div');
-            grid.appendChild(empty);
-        }
-
-        for (let day = 1; day <= daysInMonth; day++) {
-            const dayEl = document.createElement('div');
-            dayEl.textContent = day;
-            dayEl.style.cursor = 'pointer';
-            dayEl.style.padding = '5px';
-            dayEl.style.borderRadius = '4px';
-            dayEl.style.background = '#303030';
-            dayEl.style.color = 'white';
-            dayEl.onmouseover = () => dayEl.style.background = '#357abd';
-            dayEl.onmouseout = () => dayEl.style.background = '#303030';
-            dayEl.onclick = () => {
-                const selectedDate = new Date(Date.UTC(currentYear, currentMonth, day));
+            const input = document.createElement('input');
+            input.type = 'date';
+            input.onchange = () => {
+                const [year, month, day] = input.value.split('-'); // e.g., "2025-03-23" -> ["2025", "03", "23"]
+                const selectedDate = new Date(Date.UTC(year, month - 1, day)); // UTC to avoid timezone shift
                 const dueDate = selectedDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
                 updateDueDate(subject, text, dueDate);
                 datePicker.remove();
             };
-            if (currentYear === today.getFullYear() && currentMonth === today.getMonth() && day === today.getDate()) {
-                dayEl.style.background = '#ffeb3b';
-                dayEl.style.color = '#000000';
-            }
-            grid.appendChild(dayEl);
-        }
-    }
-
-    renderCalendarGrid();
-    document.body.appendChild(datePicker);
-    console.log('New modern date picker v2 loaded - if you see this, it’s working!');
-}
-
-    const monthYear = document.createElement('span');
-    monthYear.style.color = '#4a90e2';
-    monthYear.style.fontWeight = 'bold';
-
-    const next = document.createElement('button');
-    next.textContent = '►';
-    next.style.background = '#4a90e2';
-    next.style.border = 'none';
-    next.style.color = 'white';
-    next.style.padding = '5px 10px';
-    next.style.borderRadius = '4px';
-    next.style.cursor = 'pointer';
-    next.onclick = () => {
-        currentMonth++;
-        if (currentMonth > 11) {
-            currentMonth = 0;
-            currentYear++;
-        }
-        renderCalendarGrid();
-    };
-
-    header.appendChild(prev);
-    header.appendChild(monthYear);
-    header.appendChild(next);
-    datePicker.appendChild(header);
-
-    const grid = document.createElement('div');
-    grid.style.display = 'grid';
-    grid.style.gridTemplateColumns = 'repeat(7, 30px)';
-    grid.style.gap = '5px';
-    grid.style.textAlign = 'center';
-    datePicker.appendChild(grid);
-
-    function renderCalendarGrid() {
-        grid.innerHTML = '';
-        monthYear.textContent = new Date(currentYear, currentMonth).toLocaleString('en-US', { month: 'long', year: 'numeric' });
-
-        const days = ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'];
-        days.forEach(day => {
-            const dayEl = document.createElement('div');
-            dayEl.textContent = day;
-            dayEl.style.color = '#4a90e2';
-            dayEl.style.fontSize = '12px';
-            grid.appendChild(dayEl);
-        });
-
-        const firstDay = new Date(currentYear, currentMonth, 1).getDay();
-        const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
-
-        for (let i = 0; i < firstDay; i++) {
-            const empty = document.createElement('div');
-            grid.appendChild(empty);
+            datePicker.appendChild(input);
+            document.body.appendChild(datePicker);
+            datePicker.style.display = 'block';
+            input.focus();
         }
 
-        for (let day = 1; day <= daysInMonth; day++) {
-            const dayEl = document.createElement('div');
-            dayEl.textContent = day;
-            dayEl.style.cursor = 'pointer';
-            dayEl.style.padding = '5px';
-            dayEl.style.borderRadius = '4px';
-            dayEl.style.background = '#303030';
-            dayEl.style.color = 'white';
-            dayEl.onmouseover = () => dayEl.style.background = '#357abd';
-            dayEl.onmouseout = () => dayEl.style.background = '#303030';
-            dayEl.onclick = () => {
-                const selectedDate = new Date(Date.UTC(currentYear, currentMonth, day));
-                const dueDate = selectedDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-                updateDueDate(subject, text, dueDate);
-                datePicker.remove();
-            };
-            if (currentYear === today.getFullYear() && currentMonth === today.getMonth() && day === today.getDate()) {
-                dayEl.style.background = '#ffeb3b';
-                dayEl.style.color = '#000000';
-            }
-            grid.appendChild(dayEl);
-        }
-    }
-
-    renderCalendarGrid();
-    document.body.appendChild(datePicker);
-    console.log('New modern date picker loaded');
-}
-
-    const monthYear = document.createElement('span');
-    monthYear.style.color = '#4a90e2';
-    monthYear.style.fontWeight = 'bold';
-
-    const next = document.createElement('button');
-    next.textContent = '►';
-    next.style.background = '#4a90e2';
-    next.style.border = 'none';
-    next.style.color = 'white';
-    next.style.padding = '5px 10px';
-    next.style.borderRadius = '4px';
-    next.style.cursor = 'pointer';
-    next.onclick = () => {
-        currentMonth++;
-        if (currentMonth > 11) {
-            currentMonth = 0;
-            currentYear++;
-        }
-        renderCalendarGrid();
-    };
-
-    header.appendChild(prev);
-    header.appendChild(monthYear);
-    header.appendChild(next);
-    datePicker.appendChild(header);
-
-    const grid = document.createElement('div');
-    grid.style.display = 'grid';
-    grid.style.gridTemplateColumns = 'repeat(7, 30px)';
-    grid.style.gap = '5px';
-    grid.style.textAlign = 'center';
-    datePicker.appendChild(grid);
-
-    function renderCalendarGrid() {
-        grid.innerHTML = '';
-        monthYear.textContent = new Date(currentYear, currentMonth).toLocaleString('en-US', { month: 'long', year: 'numeric' });
-
-        const days = ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'];
-        days.forEach(day => {
-            const dayEl = document.createElement('div');
-            dayEl.textContent = day;
-            dayEl.style.color = '#4a90e2';
-            dayEl.style.fontSize = '12px';
-            grid.appendChild(dayEl);
-        });
-
-        const firstDay = new Date(currentYear, currentMonth, 1).getDay();
-        const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
-
-        for (let i = 0; i < firstDay; i++) {
-            const empty = document.createElement('div');
-            grid.appendChild(empty);
-        }
-
-        for (let day = 1; day <= daysInMonth; day++) {
-            const dayEl = document.createElement('div');
-            dayEl.textContent = day;
-            dayEl.style.cursor = 'pointer';
-            dayEl.style.padding = '5px';
-            dayEl.style.borderRadius = '4px';
-            dayEl.style.background = '#303030';
-            dayEl.style.color = 'white';
-            dayEl.onmouseover = () => dayEl.style.background = '#357abd';
-            dayEl.onmouseout = () => dayEl.style.background = '#303030';
-            dayEl.onclick = () => {
-                const selectedDate = new Date(Date.UTC(currentYear, currentMonth, day));
-                const dueDate = selectedDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-                updateDueDate(subject, text, dueDate);
-                datePicker.remove();
-            };
-            if (currentYear === today.getFullYear() && currentMonth === today.getMonth() && day === today.getDate()) {
-                dayEl.style.background = '#ffeb3b';
-                dayEl.style.color = '#000000';
-            }
-            grid.appendChild(dayEl);
-        }
-    }
-
-    renderCalendarGrid();
-    document.body.appendChild(datePicker);
-}
         function updateDueDate(subject, text, dueDate) {
-    let savedTasks = JSON.parse(localStorage.getItem(subject + 'Tasks')) || [];
-    savedTasks = savedTasks.map(task => 
-        task.text === text ? { ...task, dueDate } : task
-    );
-    localStorage.setItem(subject + 'Tasks', JSON.stringify(savedTasks));
-    allTasks[subject] = savedTasks;
-    
-    const taskList = document.getElementById(`${subject}-tasks`);
-    const tasks = taskList.getElementsByTagName('li');
-    for (let task of tasks) {
-        const span = task.querySelector('span');
-        if (span.textContent.startsWith(text)) {
-            span.textContent = `${text} (Due: ${dueDate})`;
-            if (task.querySelector('input').checked) span.style.textDecoration = 'line-through';
-            break;
+            let savedTasks = JSON.parse(localStorage.getItem(subject + 'Tasks')) || [];
+            savedTasks = savedTasks.map(task => 
+                task.text === text ? { ...task, dueDate } : task
+            );
+            localStorage.setItem(subject + 'Tasks', JSON.stringify(savedTasks));
+            allTasks[subject] = savedTasks;
+            
+            const taskList = document.getElementById(`${subject}-tasks`);
+            const tasks = taskList.getElementsByTagName('li');
+            for (let task of tasks) {
+                const span = task.querySelector('span');
+                if (span.textContent.startsWith(text)) {
+                    span.textContent = `${text} (Due: ${dueDate})`;
+                    if (task.querySelector('input').checked) span.style.textDecoration = 'line-through';
+                    break;
+                }
+            }
+            renderCalendar();
+            if ('Notification' in window && Notification.permission === 'granted') {
+                checkDueDates();
+            }
         }
-    }
-    renderCalendar();
-    if ('Notification' in window && Notification.permission === 'granted') {
-        checkDueDates();
-    }
-}
 
         function renderCalendar() {
             const calendarSection = document.getElementById('calendar-section');
             calendarSection.innerHTML = '';
-            const today = new Date(); // Real current date
+            const today = new Date();
             const startMonth = new Date(today.getFullYear(), today.getMonth() + currentMonthOffset, 1);
 
             for (let i = 0; i < 3; i++) {
@@ -731,7 +486,6 @@
                     dayEl.className = 'calendar-day';
                     dayEl.textContent = day;
 
-                    // Highlight today
                     const currentDate = new Date();
                     if (monthDate.getMonth() === currentDate.getMonth() &&
                         monthDate.getFullYear() === currentDate.getFullYear() &&
@@ -774,7 +528,6 @@
             calendarSection.appendChild(todayBtn);
         }
 
-        // Add tasks with Enter key
         document.querySelectorAll('.task-input').forEach(input => {
             input.addEventListener('keypress', function(e) {
                 if (e.key === 'Enter') {
@@ -784,31 +537,31 @@
             });
         });
 
-        // Close date picker when clicking outside
         document.addEventListener('click', (e) => {
             const datePicker = document.querySelector('.date-picker');
             if (datePicker && !datePicker.contains(e.target) && !e.target.classList.contains('calendar-btn')) {
                 datePicker.remove();
             }
         });
-  function checkDueDates() {
-    const tomorrow = new Date();
-    tomorrow.setDate(tomorrow.getDate() + 1);
-    const tomorrowStr = tomorrow.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
 
-    subjects.forEach(subject => {
-        const tasks = allTasks[subject] || [];
-        tasks.forEach(task => {
-            if (task.dueDate === tomorrowStr && !task.completed) {
-                new Notification(`Assignment Due Tomorrow`, {
-                    body: `"${task.text}" for ${subject.replace('-', ' ')} is due on ${task.dueDate}.`,
-                    icon: 'https://via.placeholder.com/192',
-                    vibrate: [200, 100, 200]
+        function checkDueDates() {
+            const tomorrow = new Date();
+            tomorrow.setDate(tomorrow.getDate() + 1);
+            const tomorrowStr = tomorrow.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+
+            subjects.forEach(subject => {
+                const tasks = allTasks[subject] || [];
+                tasks.forEach(task => {
+                    if (task.dueDate === tomorrowStr && !task.completed) {
+                        new Notification(`Assignment Due Tomorrow`, {
+                            body: `"${task.text}" for ${subject.replace('-', ' ')} is due on ${task.dueDate}.`,
+                            icon: 'https://via.placeholder.com/192',
+                            vibrate: [200, 100, 200]
+                        });
+                    }
                 });
-            }
-        });
-    });
-}      
+            });
+        }
     </script>
 </body>
 </html>
