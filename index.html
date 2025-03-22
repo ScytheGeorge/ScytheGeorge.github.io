@@ -291,17 +291,23 @@
 
         // Load saved tasks and initialize calendar
         window.onload = function() {
-            subjects.forEach(subject => {
-                const savedTasks = JSON.parse(localStorage.getItem(subject + 'Tasks')) || [];
-                allTasks[subject] = savedTasks;
-                savedTasks.forEach(task => {
-                    createTaskElement(subject, task.text, task.completed, task.dueDate);
-                });
-            });
-            renderCalendar();
-            // Check daily for date change
-            setInterval(checkDateChange, 60000); // Check every minute
-        };
+    subjects.forEach(subject => {
+        const savedTasks = JSON.parse(localStorage.getItem(subject + 'Tasks')) || [];
+        allTasks[subject] = savedTasks;
+        savedTasks.forEach(task => {
+            createTaskElement(subject, task.text, task.completed, task.dueDate);
+        });
+    });
+    renderCalendar();
+    setInterval(checkDateChange, 60000);
+    if ('Notification' in window) {
+        Notification.requestPermission().then(permission => {
+            if (permission === 'granted') {
+                checkDueDates();
+            }
+        });
+    }
+};
 
         function checkDateChange() {
             const now = new Date();
@@ -356,12 +362,15 @@
         }
 
         function saveTask(subject, text, completed, dueDate) {
-            const savedTasks = JSON.parse(localStorage.getItem(subject + 'Tasks')) || [];
-            savedTasks.push({ text, completed, dueDate });
-            localStorage.setItem(subject + 'Tasks', JSON.stringify(savedTasks));
-            allTasks[subject] = savedTasks;
-            renderCalendar();
-        }
+    const savedTasks = JSON.parse(localStorage.getItem(subject + 'Tasks')) || [];
+    savedTasks.push({ text, completed, dueDate });
+    localStorage.setItem(subject + 'Tasks', JSON.stringify(savedTasks));
+    allTasks[subject] = savedTasks;
+    renderCalendar();
+    if ('Notification' in window && Notification.permission === 'granted') {
+        checkDueDates();
+    }
+}
 
         function updateTaskStatus(subject, text, completed, li) {
             let savedTasks = JSON.parse(localStorage.getItem(subject + 'Tasks')) || [];
@@ -409,25 +418,28 @@
         }
 
         function updateDueDate(subject, text, dueDate) {
-            let savedTasks = JSON.parse(localStorage.getItem(subject + 'Tasks')) || [];
-            savedTasks = savedTasks.map(task => 
-                task.text === text ? { ...task, dueDate } : task
-            );
-            localStorage.setItem(subject + 'Tasks', JSON.stringify(savedTasks));
-            allTasks[subject] = savedTasks;
-            
-            const taskList = document.getElementById(`${subject}-tasks`);
-            const tasks = taskList.getElementsByTagName('li');
-            for (let task of tasks) {
-                const span = task.querySelector('span');
-                if (span.textContent.startsWith(text)) {
-                    span.textContent = `${text} (Due: ${dueDate})`;
-                    if (task.querySelector('input').checked) span.style.textDecoration = 'line-through';
-                    break;
-                }
-            }
-            renderCalendar();
+    let savedTasks = JSON.parse(localStorage.getItem(subject + 'Tasks')) || [];
+    savedTasks = savedTasks.map(task => 
+        task.text === text ? { ...task, dueDate } : task
+    );
+    localStorage.setItem(subject + 'Tasks', JSON.stringify(savedTasks));
+    allTasks[subject] = savedTasks;
+    
+    const taskList = document.getElementById(`${subject}-tasks`);
+    const tasks = taskList.getElementsByTagName('li');
+    for (let task of tasks) {
+        const span = task.querySelector('span');
+        if (span.textContent.startsWith(text)) {
+            span.textContent = `${text} (Due: ${dueDate})`;
+            if (task.querySelector('input').checked) span.style.textDecoration = 'line-through';
+            break;
         }
+    }
+    renderCalendar();
+    if ('Notification' in window && Notification.permission === 'granted') {
+        checkDueDates();
+    }
+}
 
         function renderCalendar() {
             const calendarSection = document.getElementById('calendar-section');
@@ -532,6 +544,24 @@
                 datePicker.remove();
             }
         });
+  function checkDueDates() {
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    const tomorrowStr = tomorrow.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+
+    subjects.forEach(subject => {
+        const tasks = allTasks[subject] || [];
+        tasks.forEach(task => {
+            if (task.dueDate === tomorrowStr && !task.completed) {
+                new Notification(`Assignment Due Tomorrow`, {
+                    body: `"${task.text}" for ${subject.replace('-', ' ')} is due on ${task.dueDate}.`,
+                    icon: 'https://via.placeholder.com/192',
+                    vibrate: [200, 100, 200]
+                });
+            }
+        });
+    });
+}      
     </script>
 </body>
 </html>
