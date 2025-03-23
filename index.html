@@ -38,28 +38,25 @@
             margin-top: 30px;
         }
 
-        .subject-card {
+                .subject-card {
             background-color: #252526;
             padding: 20px;
             border-radius: 8px;
             border: 1px solid #1e3a5f;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
 
         .subject-card h2 {
             color: #4a90e2;
             margin-top: 0;
             font-size: 1.2em;
-            text-align: left;
+            text-align: center;
         }
 
         #no-courses h2 {
-            text-align: left;
-        }
-
-        @media (min-width: 768px) {
-            #no-courses h2 {
-                text-align: center;
-            }
+            text-align: center;
         }
 
         .task-list {
@@ -156,7 +153,31 @@
             border-radius: 4px;
             padding: 5px;
         }
+        .progress-container {
+            margin-top: 20px;
+            width: 100%;
+        }
 
+        .progress-bar {
+            width: 100%;
+            background-color: #303030;
+            border-radius: 4px;
+            overflow: hidden;
+            height: 20px;
+            margin-top: 5px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background-color: #4a90e2;
+            transition: width 0.3s ease;
+        }
+
+        .progress-label {
+            text-align: center;
+            font-size: 0.9em;
+            color: #4a90e2;
+        }
         .calendar-section {
             margin-top: 40px;
             background-color: #252526;
@@ -248,36 +269,60 @@
                 <ul class="task-list" id="social-studies-tasks"></ul>
                 <input type="text" class="task-input" placeholder="Add task...">
                 <button class="add-task" onclick="addTask('social-studies')">Add Task</button>
+                <div class="progress-container">
+                    <div class="progress-label" id="social-studies-progress-label">0% Complete</div>
+                    <div class="progress-bar"><div class="progress-fill" id="social-studies-progress"></div></div>
+                </div>
             </div>
             <div class="subject-card" id="spanish">
                 <h2>Spanish</h2>
                 <ul class="task-list" id="spanish-tasks"></ul>
                 <input type="text" class="task-input" placeholder="Add task...">
                 <button class="add-task" onclick="addTask('spanish')">Add Task</button>
+                <div class="progress-container">
+                    <div class="progress-label" id="spanish-progress-label">0% Complete</div>
+                    <div class="progress-bar"><div class="progress-fill" id="spanish-progress"></div></div>
+                </div>
             </div>
             <div class="subject-card" id="science">
                 <h2>Science</h2>
                 <ul class="task-list" id="science-tasks"></ul>
                 <input type="text" class="task-input" placeholder="Add task...">
                 <button class="add-task" onclick="addTask('science')">Add Task</button>
+                <div class="progress-container">
+                    <div class="progress-label" id="science-progress-label">0% Complete</div>
+                    <div class="progress-bar"><div class="progress-fill" id="science-progress"></div></div>
+                </div>
             </div>
             <div class="subject-card" id="language-arts">
                 <h2>Language Arts</h2>
                 <ul class="task-list" id="language-arts-tasks"></ul>
                 <input type="text" class="task-input" placeholder="Add task...">
                 <button class="add-task" onclick="addTask('language-arts')">Add Task</button>
+                <div class="progress-container">
+                    <div class="progress-label" id="language-arts-progress-label">0% Complete</div>
+                    <div class="progress-bar"><div class="progress-fill" id="language-arts-progress"></div></div>
+                </div>
             </div>
             <div class="subject-card" id="math">
                 <h2>Math</h2>
                 <ul class="task-list" id="math-tasks"></ul>
                 <input type="text" class="task-input" placeholder="Add task...">
                 <button class="add-task" onclick="addTask('math')">Add Task</button>
+                <div class="progress-container">
+                    <div class="progress-label" id="math-progress-label">0% Complete</div>
+                    <div class="progress-bar"><div class="progress-fill" id="math-progress"></div></div>
+                </div>
             </div>
             <div class="subject-card" id="no-courses">
                 <h2>No Courses</h2>
                 <ul class="task-list" id="no-courses-tasks"></ul>
                 <input type="text" class="task-input" placeholder="Add task...">
                 <button class="add-task" onclick="addTask('no-courses')">Add Task</button>
+                <div class="progress-container">
+                    <div class="progress-label" id="no-courses-progress-label">0% Complete</div>
+                    <div class="progress-bar"><div class="progress-fill" id="no-courses-progress"></div></div>
+                </div>
             </div>
         </div>
 
@@ -290,24 +335,25 @@
         let currentMonthOffset = 0;
 
         // Load saved tasks and initialize calendar
-        window.onload = function() {
-    subjects.forEach(subject => {
-        const savedTasks = JSON.parse(localStorage.getItem(subject + 'Tasks')) || [];
-        allTasks[subject] = savedTasks;
-        savedTasks.forEach(task => {
-            createTaskElement(subject, task.text, task.completed, task.dueDate);
-        });
-    });
-    renderCalendar();
-    setInterval(checkDateChange, 60000);
-    if ('Notification' in window) {
-        Notification.requestPermission().then(permission => {
-            if (permission === 'granted') {
-                checkDueDates();
+                window.onload = function() {
+            subjects.forEach(subject => {
+                const savedTasks = JSON.parse(localStorage.getItem(subject + 'Tasks')) || [];
+                allTasks[subject] = savedTasks;
+                savedTasks.forEach(task => {
+                    createTaskElement(subject, task.text, task.completed, task.dueDate);
+                });
+            });
+            renderCalendar();
+            updateProgressBars();
+            setInterval(checkDateChange, 60000);
+            if ('Notification' in window) {
+                Notification.requestPermission().then(permission => {
+                    if (permission === 'granted') {
+                        checkDueDates();
+                    }
+                });
             }
-        });
-    }
-};
+        };
         
         function checkDateChange() {
             const now = new Date();
@@ -359,6 +405,7 @@
             li.appendChild(calendarBtn);
             li.appendChild(deleteBtn);
             taskList.appendChild(li);
+            updateProgressBars();
         }
 
         function saveTask(subject, text, completed, dueDate) {
@@ -367,6 +414,7 @@
     localStorage.setItem(subject + 'Tasks', JSON.stringify(savedTasks));
     allTasks[subject] = savedTasks;
     renderCalendar();
+    updateProgressBars();
     if ('Notification' in window && Notification.permission === 'granted') {
         checkDueDates();
     }
@@ -383,6 +431,7 @@
             const span = li.querySelector('span');
             span.style.textDecoration = completed ? 'line-through' : 'none';
             li.classList.toggle('completed', completed);
+            updateProgressBars();
         }
 
         function deleteTask(subject, text, li) {
@@ -392,6 +441,7 @@
             allTasks[subject] = savedTasks;
             li.remove();
             renderCalendar();
+            updateProgressBars();
         }
 
         function showDatePicker(subject, text, button) {
