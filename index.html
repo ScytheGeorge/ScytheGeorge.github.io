@@ -527,11 +527,12 @@
             calendarSection.appendChild(todayBtn);
         }
 
-                function checkDueDates() {
-            const tomorrow = new Date();
-            tomorrow.setDate(tomorrow.getDate() + 1);
-            const oneWeek = new Date();
-            oneWeek.setDate(oneWeek.getDate() + 7);
+        function checkDueDates() {
+            const today = new Date();
+            const tomorrow = new Date(today);
+            tomorrow.setDate(today.getDate() + 1);
+            const oneWeek = new Date(today);
+            oneWeek.setDate(today.getDate() + 7);
             const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
             const tomorrowStr = `${months[tomorrow.getMonth()]} ${tomorrow.getDate()}`;
             const oneWeekStr = `${months[oneWeek.getMonth()]} ${oneWeek.getDate()}`;
@@ -540,14 +541,14 @@
                 const tasks = allTasks[subject] || [];
                 tasks.forEach(task => {
                     if (task.dueDate && !task.completed) {
-                        if (task.dueDate === tomorrowStr) {
-                            new Notification(`Assignment Due Tomorrow`, {
+                        if (task.dueDate === oneWeekStr) {
+                            new Notification(`Assignment Due in One Week`, {
                                 body: `"${task.text}" for ${subject.replace('-', ' ')} is due on ${task.dueDate}.`,
                                 icon: 'https://via.placeholder.com/192',
                                 vibrate: [200, 100, 200]
                             });
-                        } else if (task.dueDate === oneWeekStr) {
-                            new Notification(`Assignment Due in One Week`, {
+                        } else if (task.dueDate === tomorrowStr) {
+                            new Notification(`Assignment Due Tomorrow`, {
                                 body: `"${task.text}" for ${subject.replace('-', ' ')} is due on ${task.dueDate}.`,
                                 icon: 'https://via.placeholder.com/192',
                                 vibrate: [200, 100, 200]
