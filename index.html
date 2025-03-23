@@ -165,6 +165,11 @@
             border: 1px solid #1e3a5f;
         }
 
+        .google-calendar-section {
+    margin-top: 40px;
+    text-align: center;
+        }
+
         .calendar-section h2 {
             color: #4a90e2;
             text-align: center;
@@ -281,6 +286,18 @@
             </div>
         </div>
 
+        <div class="subject-card" id="no-courses">
+              <h2>No Courses</h2>
+              <ul class="task-list" id="no-courses-tasks"></ul>
+              <input type="text" class="task-input" placeholder="Add task...">
+              <button class="add-task" onclick="addTask('no-courses')">Add Task</button>
+          </div>
+      </div>
+
+      <div class="google-calendar-section">
+          <iframe src="https://calendar.google.com/calendar/embed?height=600&wkst=1&ctz=America%2FNew_York&showPrint=0&src=bmdlb3JnZUBzdHVkZW50Lm1vbnR2YWxlazgub3Jn&src=Y18xNzVmNzllZDU0N2MxMmE5MTBmOTQzZWU3MDJmM2ZkMmRmNmQ3YmE0NzI4YjlhZWM5ZGNiZGEzODc2NzAyNmRhQGdyb3VwLmNhbGVuZGFyLmdvb2dsZS5jb20&src=bW9udHZhbGVrOC5vcmdfZWNlaDFwZ2VwdWthOTB0YWMyYzVncTc1N29AZ3JvdXAuY2FsZW5kYXIuZ29vZ2xlLmNvbQ&src=Y19jbGFzc3Jvb203MzhjMDM1OEBncm91cC5jYWxlbmRhci5nb29nbGUuY29t&src=Y19jbGFzc3Jvb20zM2YyZDQ3NkBncm91cC5jYWxlbmRhci5nb29nbGUuY29t&src=Y19jbGFzc3Jvb20zZDgyYmRhNUBncm91cC5jYWxlbmRhci5nb29nbGUuY29t&src=Y19jbGFzc3Jvb20yZWM5NmNhMUBncm91cC5jYWxlbmRhci5nb29nbGUuY29t&src=Y19jbGFzc3Jvb201NDM0YWEwN0Bncm91cC5jYWxlbmRhci5nb29nbGUuY29t&src=bW9udHZhbGVrOC5vcmdfY2xhc3Nyb29tODA5MmI3MWZAZ3JvdXAuY2FsZW5kYXIuZ29vZ2xlLmNvbQ&src=Y19jbGFzc3Jvb20yMDU1NzAxMEBncm91cC5jYWxlbmZhci5nb29nbGUuY29t&src=Y19jbGFzc3Jvb200MTQ2NjRmYUBncm91cC5jYWxlbmRhci5nb29nbGUuY29t&src=Y19jbGFzc3Jvb20wN2ZhNThlYUBncm91cC5jYWxlbmRhci5nb29nbGUuY29t&src=Y19jbGFzc3Jvb21kMjQ1MTQ4N0Bncm91cC5jYWxlbmRhci5nb29nbGUuY29t&src=Y19jbGFzc3Jvb21hZWQ4YTU0YkBncm91cC5jYWxlbmRhci5nb29nbGUuY29t&src=Y19jbGFzc3Jvb21hN2Q3OWU4OEBncm91cC5jYWxlbmRhci5nb29nbGUuY29t&src=Y19jbGFzc3Jvb20zYzlkMDJjOEBncm91cC5jYWxlbmRhci5nb29nbGUuY29t&src=Y19jbGFzc3Jvb201OWI1MGY0MUBncm91cC5jYWxlbmRhci5nb29nbGUuY29t&color=%23009688&color=%239E69AF&color=%23F6BF26&color=%23202124&color=%230047a8&color=%23007b83&color=%23007b83&color=%23007b83&color=%23616161&color=%23c26401&color=%230047a8&color=%237627bb&color=%23202124&color=%23b80672&color=%230047a8&color=%23202124&color=%23174ea6" style="border:solid 1px #777" width="800" height="600" frameborder="0" scrolling="no"></iframe>
+      </div>
+    
         <div class="calendar-section" id="calendar-section"></div>
     </div>
 
