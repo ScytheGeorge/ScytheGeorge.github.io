@@ -308,7 +308,7 @@
         });
     }
 };
-
+        
         function checkDateChange() {
             const now = new Date();
             const lastDate = localStorage.getItem('lastDate');
@@ -540,12 +540,25 @@
         });
 
         // Close date picker when clicking outside
-        document.addEventListener('click', (e) => {
-            const datePicker = document.querySelector('.date-picker');
-            if (datePicker && !datePicker.contains(e.target) && !e.target.classList.contains('calendar-btn')) {
-                datePicker.remove();
+        function checkDueDates() {
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    const tomorrowStr = `${months[tomorrow.getMonth()]} ${tomorrow.getDate()}`;
+
+    subjects.forEach(subject => {
+        const tasks = allTasks[subject] || [];
+        tasks.forEach(task => {
+            if (task.dueDate === tomorrowStr && !task.completed) {
+                new Notification(`Assignment Due Tomorrow`, {
+                    body: `"${task.text}" for ${subject.replace('-', ' ')} is due on ${task.dueDate}.`,
+                    icon: 'https://via.placeholder.com/192',
+                    vibrate: [200, 100, 200]
+                });
             }
         });
+    });
+}
     </script>
 </body>
 </html>
