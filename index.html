@@ -240,6 +240,7 @@
             background-color: #357abd;
         }
     </style>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📝</text></svg>">
 </head>
 <body>
     <header>
@@ -279,14 +280,6 @@
                 <button class="add-task" onclick="addTask('math')">Add Task</button>
             </div>
             <div class="subject-card" id="no-courses">
-                <h2>No Courses</h2>
-                <ul class="task-list" id="no-courses-tasks"></ul>
-                <input type="text" class="task-input" placeholder="Add task...">
-                <button class="add-task" onclick="addTask('no-courses')">Add Task</button>
-            </div>
-        </div>
-
-        <div class="subject-card" id="no-courses">
               <h2>No Courses</h2>
               <ul class="task-list" id="no-courses-tasks"></ul>
               <input type="text" class="task-input" placeholder="Add task...">
@@ -389,17 +382,27 @@
         }
 
         function updateTaskStatus(subject, text, completed, li) {
-            let savedTasks = JSON.parse(localStorage.getItem(subject + 'Tasks')) || [];
-            savedTasks = savedTasks.map(task => 
-                task.text === text ? { ...task, completed } : task
-            );
-            localStorage.setItem(subject + 'Tasks', JSON.stringify(savedTasks));
-            allTasks[subject] = savedTasks;
-            
-            const span = li.querySelector('span');
-            span.style.textDecoration = completed ? 'line-through' : 'none';
-            li.classList.toggle('completed', completed);
-        }
+           let savedTasks = JSON.parse(localStorage.getItem(subject + 'Tasks')) || [];
+           savedTasks = savedTasks.map(task => 
+               task.text === text ? { ...task, completed } : task
+           );
+           localStorage.setItem(subject + 'Tasks', JSON.stringify(savedTasks));
+           allTasks[subject] = savedTasks;
+
+           const span = li.querySelector('span');
+           span.style.textDecoration = completed ? 'line-through' : 'none';
+           li.classList.toggle('completed', completed);
+
+           // Clear notification flags if task is completed
+           if (completed) {
+               let notifiedTasks = JSON.parse(localStorage.getItem('notifiedTasks')) || {};
+               const taskKey = `${subject}:${text}:${savedTasks.find(t => t.text === text).dueDate}`;
+               if (notifiedTasks[taskKey]) {
+                   delete notifiedTasks[taskKey];
+                   localStorage.setItem('notifiedTasks', JSON.stringify(notifiedTasks));
+               }
+           }
+       }
 
         function deleteTask(subject, text, li) {
             let savedTasks = JSON.parse(localStorage.getItem(subject + 'Tasks')) || [];
@@ -545,36 +548,47 @@
         }
 
         function checkDueDates() {
-            const today = new Date();
-            const tomorrow = new Date(today);
-            tomorrow.setDate(today.getDate() + 1);
-            const oneWeek = new Date(today);
-            oneWeek.setDate(today.getDate() + 7);
-            const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-            const tomorrowStr = `${months[tomorrow.getMonth()]} ${tomorrow.getDate()}`;
-            const oneWeekStr = `${months[oneWeek.getMonth()]} ${oneWeek.getDate()}`;
+           const today = new Date();
+           const tomorrow = new Date(today);
+           tomorrow.setDate(today.getDate() + 1);
+           const oneWeek = new Date(today);
+           oneWeek.setDate(today.getDate() + 7);
+           const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+           const tomorrowStr = `${months[tomorrow.getMonth()]} ${tomorrow.getDate()}`;
+           const oneWeekStr = `${months[oneWeek.getMonth()]} ${oneWeek.getDate()}`;
 
-            subjects.forEach(subject => {
-                const tasks = allTasks[subject] || [];
-                tasks.forEach(task => {
-                    if (task.dueDate && !task.completed) {
-                        if (task.dueDate === oneWeekStr) {
-                            new Notification(`Assignment Due in One Week`, {
-                                body: `"${task.text}" for ${subject.replace('-', ' ')} is due on ${task.dueDate}.`,
-                                icon: 'https://via.placeholder.com/192',
-                                vibrate: [200, 100, 200]
-                            });
-                        } else if (task.dueDate === tomorrowStr) {
-                            new Notification(`Assignment Due Tomorrow`, {
-                                body: `"${task.text}" for ${subject.replace('-', ' ')} is due on ${task.dueDate}.`,
-                                icon: 'https://via.placeholder.com/192',
-                                vibrate: [200, 100, 200]
-                            });
-                        }
-                    }
-                });
-            });
-        }
+           // Load notified tasks from localStorage or initialize empty
+           let notifiedTasks = JSON.parse(localStorage.getItem('notifiedTasks')) || {};
+
+           subjects.forEach(subject => {
+               const tasks = allTasks[subject] || [];
+               tasks.forEach(task => {
+                   if (task.dueDate && !task.completed) {
+                       const taskKey = `${subject}:${task.text}:${task.dueDate}`; // Unique key for each task
+                       if (task.dueDate === oneWeekStr && !notifiedTasks[taskKey]?.oneWeek) {
+                           new Notification(`Assignment Due in One Week`, {
+                               body: `"${task.text}" for ${subject.replace('-', ' ')} is due on ${task.dueDate}.`,
+                               icon: 'https://via.placeholder.com/192',
+                               vibrate: [200, 100, 200]
+                           });
+                           notifiedTasks[taskKey] = notifiedTasks[taskKey] || {};
+                           notifiedTasks[taskKey].oneWeek = true;
+                       } else if (task.dueDate === tomorrowStr && !notifiedTasks[taskKey]?.tomorrow) {
+                           new Notification(`Assignment Due Tomorrow`, {
+                               body: `"${task.text}" for ${subject.replace('-', ' ')} is due on ${task.dueDate}.`,
+                               icon: 'https://via.placeholder.com/192',
+                               vibrate: [200, 100, 200]
+                           });
+                           notifiedTasks[taskKey] = notifiedTasks[taskKey] || {};
+                           notifiedTasks[taskKey].tomorrow = true;
+                       }
+                   }
+               });
+           });
+
+           // Save updated notified tasks
+           localStorage.setItem('notifiedTasks', JSON.stringify(notifiedTasks));
+       }
 
         document.querySelectorAll('.task-input').forEach(input => {
             input.addEventListener('keypress', function(e) {
