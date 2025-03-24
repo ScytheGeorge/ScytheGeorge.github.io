@@ -239,7 +239,7 @@
         .today-btn:hover {
             background-color: #357abd;
         }
-            .starry-bg {
+                .starry-bg {
         position: fixed;
         top: 0;
         left: 0;
@@ -251,35 +251,12 @@
         pointer-events: none;
     }
 
-    .starry-bg::before {
-        content: '';
+    .star {
         position: absolute;
-        width: 2px;
-        height: 2px;
         background: #ffffff;
         border-radius: 50%;
-        box-shadow: 0 0 5px rgba(255, 255, 255, 0.8);
-        animation: fall 10s linear infinite;
-    }
-
-    .starry-bg::after {
-        content: '';
-        position: absolute;
-        width: 3px;
-        height: 3px;
-        background: #e0e0e0;
-        border-radius: 50%;
-        box-shadow: 0 0 5px rgba(255, 255, 255, 0.6);
-        animation: fall 15s linear infinite;
-    }
-
-    .starry-bg {
-        --star-count: 30;
-    }
-
-    .starry-bg::before,
-    .starry-bg::after {
-        animation-delay: calc(var(--i) * -5s);
+        box-shadow: 0 0 6px rgba(255, 255, 255, 0.9);
+        animation: fall linear infinite;
     }
 
     @keyframes fall {
@@ -288,13 +265,13 @@
             opacity: 0;
         }
         20% {
-            opacity: 0.7;
+            opacity: 0.8;
         }
         80% {
-            opacity: 0.7;
+            opacity: 0.8;
         }
         100% {
-            transform: translateY(100vh) translateX(10vw);
+            transform: translateY(100vh) translateX(5vw);
             opacity: 0;
         }
     }
@@ -368,18 +345,15 @@
                 });
             });
             renderCalendar();
-                    const starryBg = document.querySelector('.starry-bg');
-        const starCount = 30;
+        const starryBg = document.querySelector('.starry-bg');
+        const starCount = 40;
         for (let i = 0; i < starCount; i++) {
             const star = document.createElement('div');
-            star.style.position = 'absolute';
+            star.className = 'star';
             star.style.width = Math.random() * 2 + 1 + 'px';
             star.style.height = star.style.width;
-            star.style.background = '#ffffff';
-            star.style.borderRadius = '50%';
-            star.style.boxShadow = '0 0 5px rgba(255, 255, 255, 0.6)';
             star.style.left = Math.random() * 100 + 'vw';
-            star.style.animation = `fall ${Math.random() * 10 + 5}s linear infinite`;
+            star.style.animationDuration = `${Math.random() * 10 + 10}s`;
             star.style.animationDelay = `-${Math.random() * 10}s`;
             starryBg.appendChild(star);
         }
