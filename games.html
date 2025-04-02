@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Homework Hub - Games</title>
+    <style>
+        body {
+            background-color: #0d1a26;
+            color: #e0e0e0;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            position: relative;
+            overflow-x: hidden;
+        }
+        header {
+            text-align: center;
+            padding: 20px;
+            background-color: #1e3a5f;
+        }
+        header h1 {
+            margin: 0;
+            font-size: 36px;
+        }
+        nav {
+            margin: 10px 0;
+        }
+        nav a {
+            margin: 0 15px;
+            color: #4a90e2;
+            text-decoration: none;
+            font-size: 18px;
+        }
+        nav a:hover {
+            color: #357abd;
+        }
+        .starry-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: transparent;
+            overflow: hidden;
+            z-index: -1;
+            pointer-events: none;
+        }
+        .star {
+            position: absolute;
+            background: #ffffff;
+            border-radius: 50%;
+            box-shadow: 0 0 6px rgba(255, 255, 255, 0.9);
+            animation: fall linear infinite;
+        }
+        @keyframes fall {
+            0% {
+                transform: translateY(-100vh) translateX(0);
+                opacity: 0;
+            }
+            20% {
+                opacity: 0.8;
+            }
+            80% {
+                opacity: 0.8;
+            }
+            100% {
+                transform: translateY(100vh) translateX(5vw);
+                opacity: 0;
+            }
+        }
+        .games-section {
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 0 20px;
+        }
+        .game-container {
+            margin: 20px 0;
+            padding: 20px;
+            background-color: #1e3a5f;
+            border-radius: 8px;
+        }
+        .game-container h2 {
+            margin-top: 0;
+        }
+        canvas {
+            background-color: #000;
+            border: 2px solid #4a90e2;
+        }
+        button {
+            background-color: #4a90e2;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            color: white;
+            cursor: pointer;
+            margin: 10px 0;
+        }
+        button:hover {
+            background-color: #357abd;
+        }
+        #maze-container {
+            position: relative;
+            display: inline-block;
+        }
+        #player {
+            position: absolute;
+            background-color: #4a90e2;
+            border-radius: 50%;
+        }
+        #goal {
+            position: absolute;
+            background-color: #ff4d4d;
+            border-radius: 50%;
+        }
+    </style>
+</head>
+<body>
+    <div class="starry-bg"></div>
+    <header>
+        <h1>Homework Hub - Games</h1>
+        <nav>
+            <a href="index.html">Home</a>
+            <a href="games.html">Games</a>
+        </nav>
+    </header>
+    <div class="games-section">
+        <div class="game-container" id="breakout-game">
+            <h2>Breakout</h2>
+            <canvas id="breakoutCanvas" width="480" height="320"></canvas>
+            <br>
+            <button id="playBreakout">Play</button>
+        </div>
+        <div class="game-container" id="maze-game">
+            <h2>Maze Navigator</h2>
+            <div id="maze-container"></div>
+            <button id="playMaze">Play</button>
+        </div>
+        <div class="game-container" id="embedded-game">
+            <h2>2048</h2>
+            <iframe src="https://2048game.com" width="480" height="600" frameborder="0"></iframe>
+            <p>A classic number puzzle game where you combine tiles to reach 2048. Use arrow keys to play.</p>
+        </div>
+    </div>
+    <script>
+        // Starry Background
+        window.onload = function() {
+            const starryBg = document.querySelector('.starry-bg');
+            const starCount = 40;
+            for (let i = 0; i < starCount; i++) {
+                const star = document.createElement('div');
+                star.className = 'star';
+                star.style.width = Math.random() * 2 + 1 + 'px';
+                star.style.height = star.style.width;
+                star.style.left = Math.random() * 100 + 'vw';
+                star.style.animationDuration = `${Math.random() * 10 + 10}s`;
+                star.style.animationDelay = `-${Math.random() * 10}s`;
+                starryBg.appendChild(star);
+            }
+
+            // Breakout Game
+            const breakoutCanvas = document.getElementById('breakoutCanvas');
+            const breakoutCtx = breakoutCanvas.getContext('2d');
+            const playBreakoutBtn = document.getElementById('playBreakout');
+            let ballX = breakoutCanvas.width / 2;
+            let ballY = breakoutCanvas.height - 30;
+            let ballDX = 2;
+            let ballDY = -2;
+            let ballRadius = 10;
+            let paddleHeight = 10;
+            let paddleWidth = 75;
+            let paddleX = (breakoutCanvas.width - paddleWidth) / 2;
+            let rightPressed = false;
+            let leftPressed = false;
+            let bricks = [];
+            let brickRowCount = 5;
+            let brickColumnCount = 5;
+            let brickWidth = 75;
+            let brickHeight = 20;
+            let brickPadding = 10;
+            let brickOffsetTop = 30;
+            let brickOffsetLeft = 30;
+            let score = 0;
+            let gameRunning = false;
+
+            function initBricks() {
+                for (let c = 0; c < brickColumnCount; c++) {
+                    bricks[c] = [];
+                    for (let r = 0; r < brickRowCount; r++) {
+                        bricks[c][r] = { x: 0, y: 0, status: 1 };
+                    }
+                }
+            }
+
+            function drawBall() {
+                breakoutCtx.beginPath();
+                breakoutCtx.arc(ballX, ballY, ballRadius, 0, Math.PI * 2);
+                breakoutCtx.fillStyle = '#4a90e2';
+                breakoutCtx.fill();
+                breakoutCtx.closePath();
+            }
+
+            function drawPaddle() {
+                breakoutCtx.beginPath();
+                breakoutCtx.rect(paddleX, breakoutCanvas.height - paddleHeight, paddleWidth, paddleHeight);
+                breakoutCtx.fillStyle = '#ffffff';
+                breakoutCtx.fill();
+                breakoutCtx.closePath();
+            }
+
+            function drawBricks() {
+                for (let c = 0; c < brickColumnCount; c++) {
+                    for (let r = 0; r < brickRowCount; r++) {
+                        if (bricks[c][r].status === 1) {
+                            const brickX = c * (brickWidth + brickPadding) + brickOffsetLeft;
+                            const brickY = r * (brickHeight + brickPadding) + brickOffsetTop;
+                            bricks[c][r].x = brickX;
+                            bricks[c][r].y = brickY;
+                            breakoutCtx.beginPath();
+                            breakoutCtx.rect(brickX, brickY, brickWidth, brickHeight);
+                            breakoutCtx.fillStyle = '#ff4d4d';
+                            breakoutCtx.fill();
+                            breakoutCtx.closePath();
+                        }
+                    }
+                }
+            }
+
+            function drawScore() {
+                breakoutCtx.font = '16px Arial';
+                breakoutCtx.fillStyle = '#ffffff';
+                breakoutCtx.fillText(`Score: ${score}`, 8, 20);
+            }
+
+            function collisionDetection() {
+                for (let c = 0; c < brickColumnCount; c++) {
+                    for (let r = 0; r < brickRowCount; r++) {
+                        const b = bricks[c][r];
+                        if (b.status === 1) {
+                            if (ballX > b.x && ballX < b.x + brickWidth && ballY > b.y && ballY < b.y + brickHeight) {
+                                ballDY = -ballDY;
+                                b.status = 0;
+                                score++;
+                                if (score === brickRowCount * brickColumnCount) {
+                                    alert('You Win! Score: ' + score);
+                                    gameRunning = false;
+                                    playBreakoutBtn.textContent = 'Play Again';
+                                    playBreakoutBtn.style.display = 'block';
+                                    return;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            function drawBreakout() {
+                if (!gameRunning) return;
+                breakoutCtx.clearRect(0, 0, breakoutCanvas.width, breakoutCanvas.height);
+                drawBricks();
+                drawBall();
+                drawPaddle();
+                drawScore();
+                collisionDetection();
+
+                if (ballX + ballDX > breakoutCanvas.width - ballRadius || ballX + ballDX < ballRadius) {
+                    ballDX = -ballDX;
+                }
+                if (ballY + ballDY < ballRadius) {
+                    ballDY = -ballDY;
+                } else if (ballY + ballDY > breakoutCanvas.height - ballRadius) {
+                    if (ballX > paddleX && ballX < paddleX + paddleWidth) {
+                        ballDY = -ballDY;
+                    } else {
+                        alert('Game Over! Score: ' + score);
+                        gameRunning = false;
+                        playBreakoutBtn.textContent = 'Play Again';
+                        playBreakoutBtn.style.display = 'block';
+                        return;
+                    }
+                }
+
+                ballX += ballDX;
+                ballY += ballDY;
+
+                if (rightPressed && paddleX < breakoutCanvas.width - paddleWidth) {
+                    paddleX += 7;
+                } else if (leftPressed && paddleX > 0) {
+                    paddleX -= 7;
+                }
+
+                requestAnimationFrame(drawBreakout);
+            }
+
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Right' || e.key === 'ArrowRight') {
+                    rightPressed = true;
+                } else if (e.key === 'Left' || e.key === 'ArrowLeft') {
+                    leftPressed = true;
+                }
+            });
+
+            document.addEventListener('keyup', (e) => {
+                if (e.key === 'Right' || e.key === 'ArrowRight') {
+                    rightPressed = false;
+                } else if (e.key === 'Left' || e.key === 'ArrowLeft') {
+                    leftPressed = false;
+                }
+            });
+
+            playBreakoutBtn.addEventListener('click', () => {
+                if (!gameRunning) {
+                    ballX = breakoutCanvas.width / 2;
+                    ballY = breakoutCanvas.height - 30;
+                    ballDX = 2;
+                    ballDY = -2;
+                    paddleX = (breakoutCanvas.width - paddleWidth) / 2;
+                    score = 0;
+                    initBricks();
+                    gameRunning = true;
+                    playBreakoutBtn.style.display = 'none';
+                    drawBreakout();
+                }
+            });
+
+            // Maze Game
+            const mazeContainer = document.getElementById('maze-container');
+            const playMazeBtn = document.getElementById('playMaze');
+            const cellSize = 30;
+            const mazeWidth = 15;
+            const mazeHeight = 15;
+            let maze = [];
+            let playerPos = { x: 1, y: 1 };
+            let goalPos = { x: mazeWidth - 2, y: mazeHeight - 2 };
+
+            function generateMaze() {
+                maze = [];
+                for (let y = 0; y < mazeHeight; y++) {
+                    maze[y] = [];
+                    for (let x = 0; x < mazeWidth; x++) {
+                        maze[y][x] = 1; // 1 = wall
+                    }
+                }
+
+                function recursiveBacktrack(x, y) {
+                    maze[y][x] = 0; // 0 = path
+                    const directions = [[0, 2], [2, 0], [0, -2], [-2, 0]];
+                    directions.sort(() => Math.random() - 0.5);
+
+                    for (const [dx, dy] of directions) {
+                        const nx = x + dx;
+                        const ny = y + dy;
+                        if (nx > 0 && nx < mazeWidth - 1 && ny > 0 && ny < mazeHeight - 1 && maze[ny][nx] === 1) {
+                            maze[y + dy / 2][x + dx / 2] = 0;
+                            recursiveBacktrack(nx, ny);
+                        }
+                    }
+                }
+
+                recursiveBacktrack(1, 1);
+                maze[1][1] = 0;
+                maze[mazeHeight - 2][mazeWidth - 2] = 0;
+            }
+
+            function drawMaze() {
+                mazeContainer.innerHTML = '';
+                mazeContainer.style.width = `${mazeWidth * cellSize}px`;
+                mazeContainer.style.height = `${mazeHeight * cellSize}px`;
+
+                for (let y = 0; y < mazeHeight; y++) {
+                    for (let x = 0; x < mazeWidth; x++) {
+                        const cell = document.createElement('div');
+                        cell.style.position = 'absolute';
+                        cell.style.left = `${x * cellSize}px`;
+                        cell.style.top = `${y * cellSize}px`;
+                        cell.style.width = `${cellSize}px`;
+                        cell.style.height = `${cellSize}px`;
+                        cell.style.backgroundColor = maze[y][x] === 1 ? '#1e3a5f' : '#ffffff';
+                        mazeContainer.appendChild(cell);
+                    }
+                }
+
+                const player = document.createElement('div');
+                player.id = 'player';
+                player.style.width = `${cellSize / 2}px`;
+                player.style.height = `${cellSize / 2}px`;
+                player.style.left = `${playerPos.x * cellSize + cellSize / 4}px`;
+                player.style.top = `${playerPos.y * cellSize + cellSize / 4}px`;
+                mazeContainer.appendChild(player);
+
+                const goal = document.createElement('div');
+                goal.id = 'goal';
+                goal.style.width = `${cellSize / 2}px`;
+                goal.style.height = `${cellSize / 2}px`;
+                goal.style.left = `${goalPos.x * cellSize + cellSize / 4}px`;
+                goal.style.top = `${goalPos.y * cellSize + cellSize / 4}px`;
+                mazeContainer.appendChild(goal);
+            }
+
+            function movePlayer(dx, dy) {
+                const newX = playerPos.x + dx;
+                const newY = playerPos.y + dy;
+                if (newX >= 0 && newX < mazeWidth && newY >= 0 && newY < mazeHeight && maze[newY][newX] === 0) {
+                    playerPos.x = newX;
+                    playerPos.y = newY;
+                    drawMaze();
+                    if (playerPos.x === goalPos.x && playerPos.y === goalPos.y) {
+                        alert('You reached the goal!');
+                        playMazeBtn.textContent = 'Play Again';
+                        playMazeBtn.style.display = 'block';
+                        document.removeEventListener('keydown', handleKeyPress);
+                    }
+                }
+            }
+
+            function handleKeyPress(e) {
+                switch (e.key) {
+                    case 'ArrowUp':
+                        movePlayer(0, -1);
+                        break;
+                    case 'ArrowDown':
+                        movePlayer(0, 1);
+                        break;
+                    case 'ArrowLeft':
+                        movePlayer(-1, 0);
+                        break;
+                    case 'ArrowRight':
+                        movePlayer(1, 0);
+                        break;
+                }
+            }
+
+            playMazeBtn.addEventListener('click', () => {
+                playerPos = { x: 1, y: 1 };
+                goalPos = { x: mazeWidth - 2, y: mazeHeight - 2 };
+                generateMaze();
+                drawMaze();
+                playMazeBtn.style.display = 'none';
+                document.addEventListener('keydown', handleKeyPress);
+            });
+        };
+    </script>
+</body>
+</html>
