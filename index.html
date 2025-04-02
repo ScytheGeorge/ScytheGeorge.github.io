@@ -520,9 +520,13 @@
             datePicker.style.display = 'block';
             input.focus();
         }
-        function showNotesEditor(subject, text, button, existingNotes) {
+            function showNotesEditor(subject, text, button, existingNotes) {
         let notesEditor = document.querySelector('.notes-textarea');
-        if (notesEditor) notesEditor.remove();
+        if (notesEditor) {
+            const newNotes = notesEditor.value.trim();
+            updateTaskNotes(notesEditor.dataset.subject, notesEditor.dataset.text, newNotes);
+            notesEditor.remove();
+        }
 
         notesEditor = document.createElement('textarea');
         notesEditor.className = 'notes-textarea';
@@ -536,7 +540,6 @@
         notesEditor.onblur = () => {
             const newNotes = notesEditor.value.trim();
             updateTaskNotes(subject, text, newNotes);
-            notesEditor.remove();
         };
 
         document.body.appendChild(notesEditor);
@@ -712,7 +715,7 @@
             });
         });
 
-            document.addEventListener('click', (e) => {
+        document.addEventListener('click', (e) => {
         const datePicker = document.querySelector('.date-picker');
         const notesEditor = document.querySelector('.notes-textarea');
         if (datePicker && !datePicker.contains(e.target) && !e.target.classList.contains('calendar-btn')) {
